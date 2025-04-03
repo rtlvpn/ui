@@ -1,0 +1,59 @@
+<template>
+  <v-navigation-drawer
+    v-model="showDrawer"
+    :temporary="isMobile"
+    :expand-on-hover="!isMobile"
+    :rail="!isMobile"
+    :permanent="!isMobile"
+    @click="isMobile ? $emit('toggleDrawer') : null"
+  >
+    <v-list-item
+      height="63"
+      prepend-avatar="@/assets/logo.svg"
+      title="Sing-Box Config UI"
+    >
+      <template v-slot:append v-if="isMobile">
+        <v-icon icon="mdi-close" />
+      </template>
+    </v-list-item>
+
+    <v-divider></v-divider>
+
+    <v-list density="compact" nav>
+      <v-list-item link
+        v-for="item in menu"
+        :key="item.title"
+        :to="item.path"
+        :active="router.currentRoute.value.path == item.path">
+        <template v-slot:prepend>
+          <v-icon :icon="item.icon"></v-icon>
+        </template>
+        <v-list-item-title v-text="$t(item.title)"></v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-navigation-drawer>
+</template>
+
+<script lang="ts" setup>
+import { computed } from 'vue'
+import router from '@/router'
+
+const props = defineProps(['isMobile','displayDrawer'])
+
+const showDrawer = computed((): boolean => {
+  return props.displayDrawer
+})
+
+const menu = [
+  { title: 'pages.home', icon: 'mdi-home',  path: '/' },
+  { title: 'pages.inbounds', icon: 'mdi-cloud-download',  path: '/inbounds' },
+  { title: 'pages.clients', icon: 'mdi-account-multiple',  path: '/clients' },
+  { title: 'pages.outbounds', icon: 'mdi-cloud-upload',  path: '/outbounds' },
+  { title: 'pages.endpoints', icon: 'mdi-cloud-tags',  path: '/endpoints' },
+  { title: 'pages.rules', icon: 'mdi-routes',  path: '/rules' },
+  { title: 'pages.tls', icon: 'mdi-certificate',  path: '/tls' },
+  { title: 'pages.basics', icon: 'mdi-application-cog',  path: '/basics' },
+  { title: 'pages.settings', icon: 'mdi-cog',  path: '/settings' },
+  { title: 'pages.exportconfig', icon: 'mdi-file-export',  path: '/exportconfig' },
+]
+</script>
