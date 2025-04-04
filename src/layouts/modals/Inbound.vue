@@ -162,6 +162,22 @@ export default {
       this.loading = true
       const inboundArray = await Data().loadInbounds([this.$props.id])
       this.inbound = inboundArray[0]
+      
+      // Initialize initUsers with existing associated clients
+      if (this.inbound.users && this.inbound.users.length > 0) {
+        // Find client IDs for the usernames in inbound.users
+        const userClientIds = this.clients
+          .filter((client: any) => this.inbound.users?.includes(client.name))
+          .map((client: any) => client.id);
+        
+        if (userClientIds.length > 0) {
+          this.initUsers = {
+            model: 'client',
+            values: userClientIds
+          };
+        }
+      }
+      
       this.loading = false
     },
     updateData() {
@@ -181,12 +197,14 @@ export default {
         }
         this.title = "add"
         this.loading = false
+        
+        // Reset initUsers only for new inbounds
+        this.initUsers = {
+          model: 'none',
+          values: [],
+        }
       }
       this.side = "s"
-      this.initUsers = {
-        model: 'none',
-        values: [],
-      }
     },
     changeType() {
       if (!this.inbound.listen_port) this.inbound.listen_port = RandomUtil.randomIntRange(10000, 60000)
@@ -227,6 +245,7 @@ export default {
         }
         this.$emit('save', this.inbound, clientIds.length > 0 ? clientIds : undefined)
       } else {
+        // For inbounds that don't support users or when no user selection is available
         this.$emit('save', this.inbound)
       }
       this.loading = false
@@ -244,7 +263,7 @@ export default {
       return Data().clients?? []
     },
     hasUser() {
-      if (this.$props.id > 0) return false
+      // Allow client selection for existing inbounds that support users
       if (!inboundWithUsers.includes(this.inbound.type)) return false
       if (this.inbound.type == InTypes.ShadowTLS && (<ShadowTLS>this.inbound).version < 3 ) return false
       return true

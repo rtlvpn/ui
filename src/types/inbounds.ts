@@ -50,6 +50,7 @@ interface InboundBasics extends Listen {
   tls_id: number
   addrs?: Addr[]
   out_json?: any
+  users?: string[]
 }
 
 interface ShadowTLSHandShake extends Dial {

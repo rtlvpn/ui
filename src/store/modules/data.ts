@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { push } from 'notivue'
 import { i18n } from '@/locales'
-import { Inbound } from '@/types/inbounds'
+import { Inbound, inboundWithUsers } from '@/types/inbounds'
 import { Client } from '@/types/clients'
 
 // Default empty sing-box configuration
@@ -104,15 +104,74 @@ const Data = defineStore('Data', {
             data.id = newId
             this.inbounds.push(data)
             currentConfig.inbounds = this.inbounds
+
+            // Handle client associations for new inbound
+            if (initUsers && initUsers.length > 0) {
+              const usersToAssign = this.clients.filter((c: any) => initUsers.includes(c.id))
+              
+              // Assign inbound to clients
+              for (const client of usersToAssign) {
+                if (!client.inbounds.includes(newId)) {
+                  client.inbounds.push(newId)
+                }
+              }
+              
+              // Store user names in inbound
+              data.users = usersToAssign.map((c: any) => c.name)
+            }
           } else if (action === 'edit') {
             // Edit existing inbound
             const index = this.inbounds.findIndex((i: any) => i.id === data.id)
             if (index >= 0) {
+              // Handle client associations for existing inbound
+              if (initUsers) {
+                // Find which clients to add and which to remove
+                const inboundId = data.id
+                
+                // Remove this inbound from all clients that currently have it
+                for (const client of this.clients) {
+                  const idx = client.inbounds.indexOf(inboundId)
+                  if (idx !== -1) {
+                    client.inbounds.splice(idx, 1)
+                  }
+                }
+                
+                // Add this inbound to selected clients
+                if (initUsers.length > 0) {
+                  const usersToAssign = this.clients.filter((c: any) => initUsers.includes(c.id))
+                  
+                  for (const client of usersToAssign) {
+                    if (!client.inbounds.includes(inboundId)) {
+                      client.inbounds.push(inboundId)
+                    }
+                  }
+                  
+                  // Store user names in inbound
+                  data.users = usersToAssign.map((c: any) => c.name)
+                } else {
+                  // No users selected, remove users array
+                  delete data.users
+                }
+              }
+              
               this.inbounds[index] = data
               currentConfig.inbounds = this.inbounds
             }
           } else if (action === 'del') {
             // Delete inbound by tag
+            const inboundToDelete = this.inbounds.find((i: any) => i.tag === data)
+            
+            if (inboundToDelete) {
+              // Remove inbound from all clients that have it
+              const inboundId = inboundToDelete.id
+              for (const client of this.clients) {
+                const idx = client.inbounds.indexOf(inboundId)
+                if (idx !== -1) {
+                  client.inbounds.splice(idx, 1)
+                }
+              }
+            }
+            
             this.inbounds = this.inbounds.filter((i: any) => i.tag !== data)
             currentConfig.inbounds = this.inbounds
           }
@@ -154,6 +213,110 @@ const Data = defineStore('Data', {
         } else if (object === 'config') {
           // Update entire config
           Object.assign(currentConfig, data)
+        } else if (object === 'clients') {
+          if (action === 'new') {
+            const newId = Math.max(0, ...this.clients.map((c: any) => c.id || 0)) + 1
+            data.id = newId
+            this.clients.push(data)
+            currentConfig.clients = this.clients
+            
+            // Update inbounds user list if this client is associated with any inbounds
+            if (data.inbounds && data.inbounds.length > 0) {
+              for (const inboundId of data.inbounds) {
+                const inbound = this.inbounds.find((i: any) => i.id === inboundId)
+                if (inbound) {
+                  inbound.users = inbound.users || []
+                  if (!inbound.users.includes(data.name)) {
+                    inbound.users.push(data.name)
+                  }
+                }
+              }
+              currentConfig.inbounds = this.inbounds
+            }
+          } else if (action === 'edit') {
+            const index = this.clients.findIndex((c: any) => c.id === data.id)
+            if (index >= 0) {
+              const oldClient = this.clients[index]
+              const oldName = oldClient.name
+              
+              // Handle renamed clients in inbounds
+              if (oldName !== data.name) {
+                for (const inbound of this.inbounds) {
+                  if (inbound.users && inbound.users.includes(oldName)) {
+                    const idx = inbound.users.indexOf(oldName)
+                    inbound.users[idx] = data.name
+                  }
+                }
+                currentConfig.inbounds = this.inbounds
+              }
+              
+              // Handle changed inbound associations
+              const removedInbounds = oldClient.inbounds.filter((id: number) => !data.inbounds.includes(id))
+              const addedInbounds = data.inbounds.filter((id: number) => !oldClient.inbounds.includes(id))
+              
+              // Remove client from inbounds that are no longer associated
+              for (const inboundId of removedInbounds) {
+                const inbound = this.inbounds.find((i: any) => i.id === inboundId)
+                if (inbound && inbound.users) {
+                  inbound.users = inbound.users.filter((u: string) => u !== oldName)
+                }
+              }
+              
+              // Add client to newly associated inbounds
+              for (const inboundId of addedInbounds) {
+                const inbound = this.inbounds.find((i: any) => i.id === inboundId)
+                if (inbound) {
+                  inbound.users = inbound.users || []
+                  if (!inbound.users.includes(data.name)) {
+                    inbound.users.push(data.name)
+                  }
+                }
+              }
+              
+              this.clients[index] = data
+              currentConfig.clients = this.clients
+            }
+          } else if (action === 'del') {
+            const clientToDelete = this.clients.find((c: any) => c.id === data)
+            
+            if (clientToDelete) {
+              // Remove client from all inbounds
+              for (const inbound of this.inbounds) {
+                if (inbound.users && inbound.users.includes(clientToDelete.name)) {
+                  inbound.users = inbound.users.filter((u: string) => u !== clientToDelete.name)
+                }
+              }
+              currentConfig.inbounds = this.inbounds
+            }
+            
+            this.clients = this.clients.filter((c: any) => c.id !== data)
+            currentConfig.clients = this.clients
+          } else if (action === 'addbulk') {
+            // Generate IDs for new clients
+            const maxId = Math.max(0, ...this.clients.map((c: any) => c.id || 0))
+            let newId = maxId + 1
+            
+            for (const client of data) {
+              client.id = newId++
+              this.clients.push(client)
+              
+              // Update inbounds user list for each client
+              if (client.inbounds && client.inbounds.length > 0) {
+                for (const inboundId of client.inbounds) {
+                  const inbound = this.inbounds.find((i: any) => i.id === inboundId)
+                  if (inbound) {
+                    inbound.users = inbound.users || []
+                    if (!inbound.users.includes(client.name)) {
+                      inbound.users.push(client.name)
+                    }
+                  }
+                }
+              }
+            }
+            
+            currentConfig.clients = this.clients
+            currentConfig.inbounds = this.inbounds
+          }
         }
         
         // Save updated config to localStorage
@@ -182,18 +345,161 @@ const Data = defineStore('Data', {
     // New methods for importing/exporting configs
     exportConfig(): string {
       try {
-        // Create a sanitized version of the config for sing-box
-        const exportConfig = { ...this.config }
+        // Create the base structure for the export config
+        const exportConfig: any = {
+          log: this.config.log,
+          inbounds: [],
+          outbounds: this.config.outbounds || [],
+          route: this.config.route || { rules: [] }
+        };
+        
+        // Process inbounds while keeping internal data intact
+        if (this.inbounds && this.inbounds.length > 0) {
+          for (const originalInbound of this.inbounds) {
+            // Create a clean copy of the inbound for export
+            const exportInbound = { ...originalInbound };
+            
+            // Remove internal fields from the export version
+            delete exportInbound.id;
+            delete exportInbound.addrs;
+            delete exportInbound.out_json;
+            
+            // Handle TLS config reference
+            if (originalInbound.tls_id && originalInbound.tls_id > 0) {
+              const tlsConfig = this.tlsConfigs.find(t => t.id === originalInbound.tls_id);
+              if (tlsConfig) {
+                const cleanTlsConfig = { ...tlsConfig };
+                delete cleanTlsConfig.id;
+                delete cleanTlsConfig.tag;
+                exportInbound.tls = cleanTlsConfig;
+              }
+            }
+            // Remove the internal tls_id field from export
+            delete exportInbound.tls_id;
+            
+            // Process users if this inbound type supports them
+            if (inboundWithUsers.includes(originalInbound.type)) {
+              // Find clients associated with this inbound using the original ID
+              const associatedClients = this.clients.filter(client => 
+                client.inbounds.includes(originalInbound.id) && client.enable
+              );
+              
+              if (associatedClients.length > 0) {
+                // Transform client data into appropriate user format based on inbound type
+                switch (originalInbound.type) {
+                  case 'socks':
+                  case 'http':
+                    exportInbound.users = associatedClients.map(client => ({
+                      username: client.name,
+                      password: client.config?.[originalInbound.type]?.password || ''
+                    }));
+                    break;
+                  
+                  case 'shadowsocks':
+                    exportInbound.users = associatedClients.map(client => ({
+                      name: client.name,
+                      password: client.config?.shadowsocks?.password || ''
+                    }));
+                    break;
+                    
+                  case 'vmess':
+                    exportInbound.users = associatedClients.map(client => ({
+                      name: client.name,
+                      uuid: client.config?.vmess?.uuid || '',
+                      alterId: client.config?.vmess?.alterId || 0
+                    }));
+                    break;
+                    
+                  case 'trojan':
+                    exportInbound.users = associatedClients.map(client => ({
+                      name: client.name,
+                      password: client.config?.trojan?.password || ''
+                    }));
+                    break;
+                    
+                  case 'vless':
+                    exportInbound.users = associatedClients.map(client => ({
+                      name: client.name,
+                      uuid: client.config?.vless?.uuid || '',
+                      flow: client.config?.vless?.flow || ''
+                    }));
+                    break;
+                    
+                  case 'tuic':
+                    exportInbound.users = associatedClients.map(client => ({
+                      name: client.name,
+                      uuid: client.config?.tuic?.uuid || '',
+                      password: client.config?.tuic?.password || ''
+                    }));
+                    break;
+                    
+                  case 'hysteria':
+                    exportInbound.users = associatedClients.map(client => ({
+                      name: client.name,
+                      auth: client.config?.hysteria?.auth || ''
+                    }));
+                    break;
+                    
+                  case 'hysteria2':
+                    exportInbound.users = associatedClients.map(client => ({
+                      name: client.name,
+                      password: client.config?.hysteria2?.password || ''
+                    }));
+                    break;
+                    
+                  case 'naive':
+                    exportInbound.users = associatedClients.map(client => ({
+                      username: client.name,
+                      password: client.config?.naive?.password || ''
+                    }));
+                    break;
+                    
+                  case 'shadowtls':
+                    if (originalInbound.version >= 3) {
+                      exportInbound.users = associatedClients.map(client => ({
+                        name: client.name,
+                        password: client.config?.shadowtls?.password || ''
+                      }));
+                    }
+                    break;
+                    
+                  default:
+                    exportInbound.users = associatedClients.map(client => ({
+                      name: client.name
+                    }));
+                }
+              } else {
+                // No users for this inbound
+                delete exportInbound.users;
+              }
+            } else {
+              // Inbound type doesn't support users
+              delete exportInbound.users;
+            }
+            
+            // Clean up empty objects
+            if (exportInbound.multiplex && Object.keys(exportInbound.multiplex).length === 0) {
+              delete exportInbound.multiplex;
+            }
+            
+            if (exportInbound.transport && Object.keys(exportInbound.transport).length === 0) {
+              delete exportInbound.transport;
+            }
+            
+            // Add the cleaned up inbound to the export config
+            exportConfig.inbounds.push(exportInbound);
+          }
+        }
         
         // Format the configuration as needed for sing-box
-        return JSON.stringify(exportConfig, null, 2)
+        return JSON.stringify(exportConfig, null, 2);
       } catch (error) {
         push.error({
           title: i18n.global.t('failed'),
           duration: 5000,
           message: "Failed to export configuration"
-        })
-        return ""
+        });
+        return "";
       }
     },
     
