@@ -83,7 +83,7 @@ import { i18n } from '@/locales'
 
 const configJson = ref('')
 const importJson = ref('')
-const importFile = ref(null)
+const importFile = ref<File | null>(null)
 
 // Get the configuration in JSON format
 const updateConfigJson = () => {
@@ -131,13 +131,22 @@ const downloadConfig = () => {
 }
 
 // Handle file upload
-const handleFileUpload = (file) => {
+const handleFileUpload = (files: File | File[]) => {
+  if (!files) return
+  
+  // If files is an array, use the first file
+  const file = Array.isArray(files) ? files[0] : files
   if (!file) return
   
   const reader = new FileReader()
-  reader.onload = (e) => {
+  reader.onload = (e: ProgressEvent<FileReader>) => {
     try {
-      importJson.value = e.target.result
+      const result = e.target?.result
+      if (typeof result === 'string') {
+        importJson.value = result
+      } else {
+        throw new Error('Invalid file content')
+      }
     } catch (error) {
       push.error({
         title: i18n.global.t('failed'),
