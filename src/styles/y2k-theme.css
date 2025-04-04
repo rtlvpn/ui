@@ -1,0 +1,284 @@
+/* Y2K/Windows 98/Retrowave Theme */
+
+/* Import pixel font */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Apply custom styling to entire app */
+.v-application {
+  font-family: 'VT323', monospace !important;
+  background-image: linear-gradient(to bottom right, #FF00FF, #00FFFF) !important;
+  background-attachment: fixed !important;
+}
+
+/* Override default font for all text elements */
+.v-application .text-h1,
+.v-application .text-h2,
+.v-application .text-h3,
+.v-application .text-h4,
+.v-application .text-h5,
+.v-application .text-h6,
+.v-application .text-subtitle-1,
+.v-application .text-subtitle-2,
+.v-application .text-body-1,
+.v-application .text-body-2,
+.v-application .v-btn {
+  font-family: 'VT323', monospace !important;
+  letter-spacing: 0.5px;
+}
+
+/* Special styling for headings */
+.v-application .text-h1,
+.v-application .text-h2,
+.v-application .text-h3 {
+  text-shadow: 2px 2px 0px #FF00FF, 4px 4px 0px #00FFFF;
+  font-family: 'Press Start 2P', cursive !important;
+}
+
+/* Windows 98 style card styling */
+.v-card {
+  border: 2px solid #000000 !important;
+  border-radius: 0 !important;
+  box-shadow: 
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px grey,
+    inset 2px 2px white !important;
+  background-color: #C0C0C0 !important;
+}
+
+/* Windows 98 style card title bar */
+.v-card-title {
+  background: linear-gradient(90deg, #000080, #1084d0) !important;
+  color: white !important;
+  font-weight: bold !important;
+  height: 28px !important;
+  padding: 2px 4px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Windows 98 style buttons */
+.v-btn {
+  border-radius: 0 !important;
+  background-color: #C0C0C0 !important;
+  box-shadow: 
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px grey,
+    inset 2px 2px white !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-weight: normal !important;
+  height: 28px !important;
+  min-width: 80px !important;
+  transition: none !important;
+}
+
+.v-btn:active {
+  box-shadow: 
+    inset 1px 1px #0a0a0a,
+    inset -1px -1px #dfdfdf,
+    inset 2px 2px grey,
+    inset -2px -2px white !important;
+}
+
+/* Windows 98 style text fields */
+.v-field {
+  border-radius: 0 !important;
+  background-color: white !important;
+  box-shadow: 
+    inset 1px 1px #0a0a0a,
+    inset -1px -1px #dfdfdf,
+    inset 2px 2px grey,
+    inset -2px -2px white !important;
+}
+
+/* Add scanlines effect */
+.v-application::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.3;
+}
+
+/* Add CRT screen glow */
+.v-application::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 90%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* Menu items with underlined hotkeys */
+.v-list-item__title span.hotkey {
+  text-decoration: underline;
+}
+
+/* Tables with grid lines */
+.v-table {
+  border-collapse: collapse !important;
+}
+
+.v-table th, .v-table td {
+  border: 1px solid #808080 !important;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #c0c0c0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border: 1px solid #000;
+  box-shadow: 
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px grey,
+    inset 2px 2px white;
+}
+
+::-webkit-scrollbar-button {
+  display: block;
+  height: 16px;
+  width: 16px;
+  background-color: #c0c0c0;
+  box-shadow: 
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px grey,
+    inset 2px 2px white;
+}
+
+/* Checkbox and radio button styling */
+.v-checkbox .v-selection-control__input:before {
+  border-radius: 0 !important;
+}
+
+/* Dialog boxes */
+.v-dialog {
+  border: 2px solid #000 !important;
+  border-radius: 0 !important;
+}
+
+/* Fix Cursor - Make sure it's visible and applies to all elements */
+html, body, * {
+    cursor: url('/public/assets/cursor.png'), pointer !important;
+}
+
+/* Sidebar/Navigation Styling */
+.v-navigation-drawer {
+  background-color: #C0C0C0 !important;
+  border-right: 2px solid #000000 !important;
+  box-shadow: 
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px grey,
+    inset 2px 2px white !important;
+}
+
+/* Navigation drawer header */
+.v-navigation-drawer .v-list-item {
+  background-color: #000080 !important;
+  color: white !important;
+  border-bottom: 2px solid #000000 !important;
+}
+
+.v-navigation-drawer .v-list-item__title {
+  font-family: 'VT323', monospace !important;
+  font-size: 1.2rem !important;
+}
+
+/* Navigation items */
+.v-navigation-drawer .v-list {
+  background-color: #C0C0C0 !important;
+  padding: 2px !important;
+}
+
+.v-navigation-drawer .v-list-item {
+  margin-bottom: 2px !important;
+  border: 1px solid #808080 !important;
+  border-radius: 0 !important;
+  height: 32px !important;
+}
+
+.v-navigation-drawer .v-list-item--active {
+  background-color: #000080 !important;
+  color: white !important;
+  box-shadow: 
+    inset 1px 1px #0a0a0a,
+    inset -1px -1px #dfdfdf,
+    inset 2px 2px grey,
+    inset -2px -2px white !important;
+}
+
+.v-navigation-drawer .v-list-item:hover:not(.v-list-item--active) {
+  background-color: #1084d0 !important;
+  color: white !important;
+}
+
+/* App Bar styling */
+.v-app-bar {
+  background-color: #C0C0C0 !important;
+  border-bottom: 2px solid #000000 !important;
+  box-shadow: 
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px grey,
+    inset 2px 2px white !important;
+}
+
+.v-app-bar-title {
+  font-family: 'Press Start 2P', cursive !important;
+  font-size: 1rem !important;
+  color: #000080 !important;
+  text-shadow: 1px 1px #FF00FF !important;
+}
+
+/* Start button (menu button) */
+.v-app-bar .v-icon {
+  color: #000080 !important;
+  background-color: #C0C0C0 !important;
+  border: 1px solid #000000 !important;
+  box-shadow: 
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px grey,
+    inset 2px 2px white !important;
+  padding: 2px !important;
+  border-radius: 0 !important;
+}
+
+/* Divider styling */
+.v-divider {
+  border-color: #808080 !important;
+  margin: 2px 0 !important;
+} 

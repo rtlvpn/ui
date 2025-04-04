@@ -17,10 +17,22 @@ import { createVuetify } from 'vuetify'
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   defaults: {
-    VRow: { dense: true } // Apply dense to v-row as default
+    VRow: { dense: true }, // Apply dense to v-row as default
+    VBtn: {
+      style: 'text-transform: none; border-radius: 0; box-shadow: 3px 3px 0px #000000;'
+    },
+    VCard: {
+      style: 'border: 2px solid #000000; border-radius: 0; box-shadow: 5px 5px 0px #000000;'
+    },
+    VTextField: {
+      style: 'border-radius: 0; background-color: #FFFFFF; border: 2px solid #000000;'
+    },
+    VSelect: {
+      style: 'border-radius: 0; background-color: #FFFFFF; border: 2px solid #000000;'
+    }
   },
   theme: {
-    defaultTheme: localStorage.getItem('theme') ?? 'light',
+    defaultTheme: 'y2k',
     themes: {
       light: {
         colors: {
@@ -46,6 +58,21 @@ export default createVuetify({
           success: colors.green.darken2,
           surface: colors.grey.darken3,
           background: colors.grey.darken4,
+        },
+      },
+      y2k: {
+        dark: false,
+        colors: {
+          primary: '#FF00FF', // Bright magenta/pink
+          secondary: '#00FFFF', // Cyan
+          tertiary: '#FFFF00', // Yellow
+          accent: '#FF00AA', // Hot pink
+          error: '#FF0000', // Red
+          warning: '#FFA500', // Orange
+          info: '#00FFFF', // Cyan
+          success: '#00FF00', // Lime green
+          surface: '#C0C0C0', // Silver (Windows 98 bg color)
+          background: '#008080', // Teal (Windows 98 default)
         },
       },
     },

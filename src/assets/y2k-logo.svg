@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60">
+  <!-- Background -->
+  <rect width="240" height="60" fill="#C0C0C0" />
+  
+  <!-- 3D border effect -->
+  <path d="M0,0 L240,0 L240,60 L0,60 Z" fill="none" stroke="#FFFFFF" stroke-width="2" />
+  <path d="M2,2 L238,2 L238,58 L2,58 Z" fill="none" stroke="#808080" stroke-width="2" />
+  
+  <!-- Retrowave sun -->
+  <circle cx="40" cy="30" r="20" fill="#FF00FF" />
+  <circle cx="40" cy="30" r="15" fill="#FF55FF" />
+  <circle cx="40" cy="30" r="10" fill="#FF99FF" />
+  
+  <!-- Text "SING-BOX" -->
+  <text x="80" y="35" font-family="'Press Start 2P', cursive" font-size="20" fill="#000080" stroke="#00FFFF" stroke-width="1">SING-BOX</text>
+  
+  <!-- UI text with retrowave gradient -->
+  <text x="80" y="55" font-family="'Press Start 2P', cursive" font-size="16">
+    <tspan fill="#FF00FF">U</tspan>
+    <tspan fill="#FF00AA">I</tspan>
+  </text>
+  
+  <!-- Windows 98-style grid overlay -->
+  <path d="M0,0 L240,60 M240,0 L0,60" stroke="#000080" stroke-width="1" stroke-opacity="0.3" />
+</svg> 
