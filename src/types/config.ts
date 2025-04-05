@@ -91,6 +91,7 @@ interface RouteRuleSet {
 
 interface Experimental {
   cache_file?: CacheFile
+  v2ray_api?: V2RayAPI
 }
 
 interface CacheFile {
@@ -98,6 +99,19 @@ interface CacheFile {
   path?: string
   cache_id?: string
   store_fakeip?: boolean
+}
+
+interface V2RayAPI {
+  enabled?: boolean
+  listen?: string
+  stats?: Stats
+}
+
+interface Stats {
+  enabled?: boolean
+  inbounds?: string[]
+  outbounds?: string[]
+  users?: string[]
 }
 
 export interface Config {

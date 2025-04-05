@@ -6,8 +6,8 @@
       </v-btn>
     </v-col>
   </v-row>
-  <v-expansion-panels>
-    <v-expansion-panel :title="$t('basic.log.title')">
+  <v-expansion-panels variant="accordion" multiple>
+    <v-expansion-panel :title="$t('basic.log.title')" rounded class="mb-2">
       <v-expansion-panel-text>
         <v-row>
           <v-col cols="12" sm="6" md="3" lg="2">
@@ -36,7 +36,7 @@
         </v-row>
       </v-expansion-panel-text>
     </v-expansion-panel>
-    <v-expansion-panel title="DNS">
+    <v-expansion-panel title="DNS" rounded class="mb-2">
       <v-expansion-panel-text>
         <v-row>
           <v-col cols="12" sm="6" md="3" lg="2">
@@ -85,15 +85,18 @@
         </v-row>
         <v-row>
           <v-col cols="12" sm="6" md="3" lg="2" align-self="center">
-            <v-btn @click="addDnsServer" rounded>
-              <v-icon icon="mdi-plus" />{{ $t('basic.dns.server') }}
+            <v-btn @click="addDnsServer" color="primary" variant="tonal" class="mt-2">
+              <v-icon icon="mdi-plus" class="mr-1" />{{ $t('basic.dns.server') }}
             </v-btn>
           </v-col>
         </v-row>
-        <template v-for="(s, index) in appConfig.dns.servers">
-          {{ $t('basic.dns.server') + ' ' + (index+1) }} <v-icon icon="mdi-delete" @click="appConfig.dns.servers.splice(index,1)" />
+        <template v-for="(s, index) in appConfig.dns.servers" :key="index">
+          <div class="d-flex align-center mt-4 mb-2">
+            <span class="text-subtitle-1">{{ $t('basic.dns.server') + ' ' + (index+1) }}</span> 
+            <v-icon icon="mdi-delete" class="ml-2" @click="appConfig.dns.servers.splice(index,1)" />
+          </div>
           <v-divider></v-divider>
-          <v-row>
+          <v-row class="mt-2">
             <v-col cols="12" sm="6" md="3" lg="2">
               <v-text-field
                 v-model="s.tag"
@@ -143,7 +146,7 @@
         </template>
       </v-expansion-panel-text>
     </v-expansion-panel>
-    <v-expansion-panel title="NTP">
+    <v-expansion-panel title="NTP" rounded class="mb-2">
       <v-expansion-panel-text>
         <v-row>
           <v-col cols="12" sm="6" md="3" lg="2">
@@ -180,7 +183,7 @@
         <Dial :dial="appConfig.ntp" :outTags="outboundTags" v-if="appConfig.ntp?.enabled" />
       </v-expansion-panel-text>
     </v-expansion-panel>
-    <v-expansion-panel :title="$t('basic.routing.title')">
+    <v-expansion-panel :title="$t('basic.routing.title')" rounded class="mb-2">
       <v-expansion-panel-text>
         <v-row>
           <v-col cols="12" sm="6" md="3" lg="2">
@@ -222,11 +225,11 @@
         </v-row>
       </v-expansion-panel-text>
     </v-expansion-panel>
-    <v-expansion-panel title="Experimental">
+    <v-expansion-panel title="Experimental" rounded class="mb-2">
       <v-expansion-panel-text>
-        Cache File
+        <div class="text-subtitle-1 mb-2">Cache File</div>
         <v-divider></v-divider>
-        <v-row>
+        <v-row class="mt-3">
           <v-col cols="12" sm="6" md="3" lg="2">
             <v-switch v-model="enableCacheFile" color="primary" :label="$t('enable')" hide-details></v-switch>
           </v-col>
@@ -251,6 +254,59 @@
               hide-details></v-switch>
           </v-col>
         </v-row>
+
+        <div class="text-subtitle-1 mt-5 mb-2">V2Ray API</div>
+        <v-divider></v-divider>
+        <v-row class="mt-3">
+          <v-col cols="12" sm="6" md="4">
+            <v-switch v-model="enableV2rayApi" color="primary" :label="$t('enable')" hide-details></v-switch>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" v-if="appConfig.experimental.v2ray_api">
+            <v-text-field
+              v-model="appConfig.experimental.v2ray_api.listen"
+              hide-details
+              label="Listen Address"
+              placeholder="127.0.0.1:8080"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+
+        <div class="text-subtitle-1 mt-3 mb-2 ml-4" v-if="appConfig.experimental.v2ray_api">Stats</div>
+        <v-row class="mt-3 ml-4" v-if="appConfig.experimental.v2ray_api">
+          <v-col cols="12" sm="6" md="4">
+            <v-switch v-model="enableV2rayStats" color="primary" :label="$t('enable')" hide-details></v-switch>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" v-if="appConfig.experimental.v2ray_api?.stats">
+            <v-select
+              v-model="appConfig.experimental.v2ray_api.stats.inbounds"
+              hide-details
+              label="Inbounds to Count Traffic"
+              :items="inboundTags"
+              multiple
+              chips
+            ></v-select>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" v-if="appConfig.experimental.v2ray_api?.stats">
+            <v-select
+              v-model="appConfig.experimental.v2ray_api.stats.outbounds"
+              hide-details
+              label="Outbounds to Count Traffic"
+              :items="outboundTags"
+              multiple
+              chips
+            ></v-select>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" v-if="appConfig.experimental.v2ray_api?.stats">
+            <v-select
+              v-model="appConfig.experimental.v2ray_api.stats.users"
+              hide-details
+              label="Users to Count Traffic"
+              :items="userNames"
+              multiple
+              chips
+            ></v-select>
+          </v-col>
+        </v-row>
       </v-expansion-panel-text>
     </v-expansion-panel>
   </v-expansion-panels>
@@ -271,6 +327,21 @@ const appConfig = computed((): Config => {
 })
 
 onMounted(async () => {
+  // Ensure DNS structure exists
+  if (!appConfig.value.dns) {
+    appConfig.value.dns = { servers: [], rules: [] }
+  }
+  
+  // Ensure route structure exists
+  if (!appConfig.value.route) {
+    appConfig.value.route = { rules: [], rule_set: [] }
+  }
+  
+  // Ensure experimental structure exists
+  if (appConfig.value.experimental === undefined) {
+    appConfig.value.experimental = {}
+  }
+  
   oldConfig.value = JSON.parse(JSON.stringify(Data().config))
 })
 
@@ -288,52 +359,116 @@ const saveConfig = async () => {
 }
 
 const outboundTags = computed((): string[] => {
-  return [...Data().outbounds?.map((o:any) => o.tag), ...Data().endpoints?.map((e:any) => e.tag)]
+  return [...Data().outbounds?.map((o:any) => o.tag) || [], ...Data().endpoints?.map((e:any) => e.tag) || []]
 })
 
 const levels = ["trace", "debug", "info", "warn", "error", "fatal", "panic"]
 
 const dnsServersTags = computed((): string[] => {
-  const s = <string[]>appConfig.value.dns.servers?.filter(s => s.tag && s.tag != "")?.map(s => s.tag)
-  return s?? <string[]>[]
+  const s = <string[]>appConfig.value.dns?.servers?.filter(s => s.tag && s.tag != "")?.map(s => s.tag)
+  return s || <string[]>[]
 })
 
 const finalDns = computed({
-  get() { return appConfig.value.dns.final?? '' },
-  set(v:string) { appConfig.value.dns.final = v.length>0 ? v : undefined }
+  get() { return appConfig.value.dns?.final || '' },
+  set(v:string) { 
+    if (!appConfig.value.dns) appConfig.value.dns = { servers: [], rules: [] }
+    appConfig.value.dns.final = v.length > 0 ? v : undefined 
+  }
 })
 
 const addDnsServer = () => {
+  if (!appConfig.value.dns) appConfig.value.dns = { servers: [], rules: [] }
   if (!appConfig.value.dns.servers) appConfig.value.dns.servers = []
   appConfig.value.dns.servers.push({address: 'local'})
 }
 
 const routeMark = computed({
-  get() { return appConfig.value.route.default_mark?? 0 },
-  set(v:number) { v>0 ? appConfig.value.route.default_mark = v : delete appConfig.value.route.default_mark }
+  get() { return appConfig.value.route?.default_mark || 0 },
+  set(v:number) { 
+    if (!appConfig.value.route) appConfig.value.route = { rules: [], rule_set: [] }
+    v > 0 ? appConfig.value.route.default_mark = v : delete appConfig.value.route.default_mark 
+  }
 })
 
 const enableNtp = computed({
-  get() { return appConfig.value.ntp?.enabled?? false },
+  get() { return appConfig.value.ntp?.enabled || false },
   set(v:boolean) { 
     if (v){
       appConfig.value.ntp = <Ntp>{ enabled: true, server: 'time.apple.com', server_port: 123, interval: '30m'}
-    } else { appConfig.value.ntp = <Ntp>{}  }
+    } else { 
+      appConfig.value.ntp = <Ntp>{} 
+    }
   }
 })
 
 const ntpInterval = computed({
-  get():any { return appConfig.value.ntp?.interval? parseInt(appConfig.value.ntp?.interval.replace('m','')) : null },
-  set(v:number) { if (appConfig.value.ntp) v>0 ? appConfig.value.ntp.interval =  v + 'm' : delete appConfig.value.ntp.interval }
+  get():any { return appConfig.value.ntp?.interval ? parseInt(appConfig.value.ntp?.interval.replace('m','')) : null },
+  set(v:number) { if (appConfig.value.ntp) v > 0 ? appConfig.value.ntp.interval = v + 'm' : delete appConfig.value.ntp.interval }
 })
 
 const enableCacheFile = computed({
-  get() { return appConfig.value.experimental.cache_file?.enabled?? false },
+  get() { return appConfig.value.experimental?.cache_file?.enabled || false },
   set(v:boolean) { 
+    if (!appConfig.value.experimental) appConfig.value.experimental = {}
     if (v){
       appConfig.value.experimental.cache_file = { enabled: true }
-    } else { delete appConfig.value.experimental.cache_file  }
+    } else { 
+      delete appConfig.value.experimental.cache_file 
+    }
   }
 })
 
+const enableV2rayApi = computed({
+  get() { return appConfig.value.experimental?.v2ray_api?.enabled || false },
+  set(v:boolean) { 
+    if (!appConfig.value.experimental) appConfig.value.experimental = {}
+    
+    if (v){
+      appConfig.value.experimental.v2ray_api = { enabled: true }
+    } else { 
+      delete appConfig.value.experimental.v2ray_api 
+    }
+  }
+})
+
+const enableV2rayStats = computed({
+  get() { return appConfig.value.experimental?.v2ray_api?.stats?.enabled || false },
+  set(v:boolean) { 
+    if (!appConfig.value.experimental) appConfig.value.experimental = {}
+    if (!appConfig.value.experimental.v2ray_api) appConfig.value.experimental.v2ray_api = { enabled: true }
+    
+    if (v) {
+      appConfig.value.experimental.v2ray_api!.stats = { enabled: true }
+    } else if (appConfig.value.experimental.v2ray_api) { 
+      delete appConfig.value.experimental.v2ray_api.stats 
+    }
+  }
+})
+
+const inboundTags = computed((): string[] => {
+  return [...Data().inbounds?.map((i:any) => i.tag) || []]
+})
+
+const userNames = computed((): string[] => {
+  const clients = Data().clients;
+  return clients ? clients.map((c:any) => c.name) : [];
+})
 </script>
+
+<style scoped>
+.v-expansion-panel {
+  border: 1px solid #CCCCCC;
+  box-shadow: 2px 2px 0px #999999;
+  background: linear-gradient(to bottom, #F0F0F0, #E0E0E0);
+}
+
+.v-expansion-panel-title {
+  color: #000080;
+  font-weight: bold;
+}
+
+.v-btn {
+  box-shadow: 2px 2px 0px #999999;
+}
+</style>

@@ -16,6 +16,14 @@
             ></v-textarea>
           </v-card-text>
           <v-card-actions>
+            <v-btn 
+              color="error"
+              @click="resetConfig"
+              prepend-icon="mdi-trash-can"
+              class="mr-auto"
+            >
+              {{ $t('exportConfig.resetConfig') }}
+            </v-btn>
             <v-spacer></v-spacer>
             <v-btn 
               color="primary"
@@ -172,6 +180,14 @@ const importConfig = () => {
     updateConfigJson()
     importJson.value = ''
     importFile.value = null
+  }
+}
+
+// Reset configuration and clear localStorage
+const resetConfig = () => {
+  if (confirm(i18n.global.t('exportConfig.resetConfirm'))) {
+    localStorage.clear()
+    window.location.reload()
   }
 }
 </script> 

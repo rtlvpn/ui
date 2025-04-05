@@ -10,11 +10,17 @@ const DEFAULT_CONFIG = {
     level: "info",
     timestamp: true
   },
+  dns: {
+    servers: [],
+    rules: []
+  },
   inbounds: [],
   outbounds: [],
   route: {
-    rules: []
-  }
+    rules: [],
+    rule_set: []
+  },
+  experimental: {}
 }
 
 interface DataState {
@@ -352,6 +358,11 @@ const Data = defineStore('Data', {
           outbounds: this.config.outbounds || [],
           route: this.config.route || { rules: [] }
         };
+        
+        // Add experimental config if it exists
+        if (this.config.experimental) {
+          exportConfig.experimental = { ...this.config.experimental };
+        }
         
         // Process inbounds while keeping internal data intact
         if (this.inbounds && this.inbounds.length > 0) {

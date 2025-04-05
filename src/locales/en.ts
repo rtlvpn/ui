@@ -483,7 +483,9 @@ export default {
     downloadConfig: "Download JSON",
     copiedToClipboard: "Configuration copied to clipboard",
     copyFailed: "Failed to copy configuration",
-    downloadStarted: "Download started"
+    downloadStarted: "Download started",
+    resetConfig: "Reset Configuration",
+    resetConfirm: "Are you sure you want to reset all configuration? This will clear all data and reload the page."
   },
   importConfig: {
     title: "Import Sing-Box Configuration",

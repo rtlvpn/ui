@@ -94,6 +94,65 @@
     inset -2px -2px white !important;
 }
 
+/* Select dropdown styling */
+.v-select__selection {
+  color: black !important;
+}
+
+.v-select .v-field__input {
+  padding: 0 5px !important;
+}
+
+.v-select .v-select__content {
+  background-color: white !important;
+  border: 2px solid #000000 !important;
+  border-radius: 0 !important;
+  box-shadow: 
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px grey,
+    inset 2px 2px white !important;
+}
+
+.v-select .v-list-item {
+  min-height: 24px !important;
+  padding: 0 8px !important;
+}
+
+.v-select .v-list-item--active {
+  background-color: #000080 !important;
+  color: white !important;
+}
+
+/* Checkbox and switch styling */
+.v-selection-control {
+  min-height: 24px !important;
+}
+
+.v-switch .v-selection-control__wrapper {
+  height: 24px !important;
+}
+
+.v-switch .v-selection-control__input {
+  transform: scale(0.8) !important;
+}
+
+.v-switch .v-switch__track {
+  background-color: #C0C0C0 !important;
+  border: 1px solid #000000 !important;
+  opacity: 1 !important;
+}
+
+.v-switch .v-switch__thumb {
+  background-color: #DFDFDF !important;
+  border: 1px solid #000000 !important;
+}
+
+.v-switch--indeterminate .v-switch__thumb,
+.v-switch.v-switch--active .v-switch__thumb {
+  background-color: #000080 !important;
+}
+
 /* Add scanlines effect */
 .v-application::after {
   content: "";
@@ -281,4 +340,42 @@ html, body, * {
 .v-divider {
   border-color: #808080 !important;
   margin: 2px 0 !important;
+}
+
+/* Expansion panels for basics tab */
+.v-expansion-panels {
+  background: transparent !important;
+}
+
+.v-expansion-panel {
+  margin-bottom: 8px !important;
+  background-color: #C0C0C0 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 0 !important;
+  box-shadow: 
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #dfdfdf,
+    inset -2px -2px grey,
+    inset 2px 2px white !important;
+  overflow: visible !important;
+}
+
+.v-expansion-panel-title {
+  background: linear-gradient(90deg, #000080, #1084d0) !important;
+  color: white !important;
+  font-weight: bold !important;
+  min-height: 30px !important;
+}
+
+.v-expansion-panel-title__overlay {
+  background-color: transparent !important;
+}
+
+.v-expansion-panel-text {
+  background-color: #C0C0C0 !important;
+  padding: 16px !important;
+}
+
+.v-expansion-panel--active {
+  margin-bottom: 8px !important;
 } 
