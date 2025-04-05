@@ -517,7 +517,114 @@ const Data = defineStore('Data', {
     importConfig(jsonConfig: string): boolean {
       try {
         const parsedConfig = JSON.parse(jsonConfig)
-        this.setNewData({ config: parsedConfig })
+        
+        // Process the imported configuration to maintain relationships between inbounds and clients
+        const processedData: any = { config: parsedConfig }
+        
+        // Process inbounds from imported config
+        if (parsedConfig.inbounds && parsedConfig.inbounds.length > 0) {
+          const processedInbounds = parsedConfig.inbounds.map((inbound: any, index: number) => {
+            // Create internal inbound structure with ID
+            const inboundId = index + 1 // Generate sequential IDs
+            const processedInbound = {
+              ...inbound,
+              id: inboundId
+            }
+            
+            // Store users property if it exists
+            if (inbound.users && inbound.users.length > 0) {
+              // For each inbound type, extract user names from the appropriate field
+              if (['socks', 'http'].includes(inbound.type)) {
+                processedInbound.users = inbound.users.map((user: any) => user.username)
+              } else if (['shadowsocks', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'tuic', 'shadowtls'].includes(inbound.type)) {
+                processedInbound.users = inbound.users.map((user: any) => user.name)
+              }
+            }
+            
+            // Process any TLS config embedded in the inbound
+            if (inbound.tls) {
+              // Store the TLS config separately
+              if (!processedData.tls) {
+                processedData.tls = []
+              }
+              
+              const tlsId = processedData.tls.length + 1
+              const tlsConfig = {
+                ...inbound.tls,
+                id: tlsId,
+                tag: `tls-${inbound.tag}-${tlsId}`
+              }
+              
+              processedData.tls.push(tlsConfig)
+              processedInbound.tls_id = tlsId
+              
+              // Remove the embedded tls config to avoid duplication
+              delete processedInbound.tls
+            }
+            
+            return processedInbound
+          })
+          
+          processedData.inbounds = processedInbounds
+          
+          // Process or create clients based on inbound users
+          const usernames = new Set<string>()
+          processedInbounds.forEach((inbound: { users?: string[], id?: number }) => {
+            if (inbound.users && inbound.users.length > 0) {
+              inbound.users.forEach((username: string) => usernames.add(username))
+            }
+          })
+          
+          // Create or update clients for each username
+          if (usernames.size > 0) {
+            const existingClients = this.clients || []
+            const updatedClients = [...existingClients]
+            
+            // For each username found in inbounds
+            Array.from(usernames).forEach((username) => {
+              // Check if client already exists
+              const existingClient = existingClients.find(c => c.name === username)
+              
+              if (existingClient) {
+                // Update existing client's inbounds
+                const clientInbounds = processedInbounds
+                  .filter((inbound: { users?: string[] }) => inbound.users && inbound.users.includes(username))
+                  .map((inbound: { id: number }) => inbound.id)
+                
+                existingClient.inbounds = Array.from(new Set([...existingClient.inbounds || [], ...clientInbounds]))
+              } else {
+                // Create new client
+                const newId = Math.max(0, ...updatedClients.map((c: any) => c.id || 0)) + 1
+                const clientInbounds = processedInbounds
+                  .filter((inbound: { users?: string[] }) => inbound.users && inbound.users.includes(username))
+                  .map((inbound: { id: number }) => inbound.id)
+                
+                const newClient = {
+                  id: newId,
+                  name: username,
+                  enable: true,
+                  config: {}, // This will be populated with random configs if needed
+                  inbounds: clientInbounds,
+                  links: [],
+                  volume: 0,
+                  expiry: 0,
+                  up: 0,
+                  down: 0,
+                  desc: `Imported client for ${username}`,
+                  group: 'imported'
+                }
+                
+                updatedClients.push(newClient)
+              }
+            })
+            
+            processedData.clients = updatedClients
+          }
+        }
+        
+        // Set the processed data
+        this.setNewData(processedData)
+        
         push.success({
           title: i18n.global.t('success'),
           duration: 5000,
@@ -525,10 +632,11 @@ const Data = defineStore('Data', {
         })
         return true
       } catch (error) {
+        console.error("Import error:", error)
         push.error({
           title: i18n.global.t('failed'),
           duration: 5000,
-          message: "Failed to import configuration. Invalid JSON format."
+          message: "Failed to import configuration. Invalid JSON format or structure."
         })
         return false
       }
