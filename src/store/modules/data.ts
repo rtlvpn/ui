@@ -75,6 +75,14 @@ const Data = defineStore('Data', {
       if (data.subURI) this.subURI = data.subURI
       if (data.config) {
         this.config = data.config
+        
+        // Extract sections from config into local state
+        // This ensures the individual state arrays are synchronized with the config
+        if (data.config.inbounds) this.inbounds = data.config.inbounds
+        if (data.config.outbounds) this.outbounds = data.config.outbounds
+        if (data.config.clients) this.clients = data.config.clients
+        if (data.config.tls) this.tlsConfigs = data.config.tls
+        
         // Save config to localStorage
         localStorage.setItem("singbox_config", JSON.stringify(data.config))
       }
@@ -83,6 +91,30 @@ const Data = defineStore('Data', {
       if (Object.hasOwn(data, 'outbounds')) this.outbounds = data.outbounds ?? []
       if (Object.hasOwn(data, 'endpoints')) this.endpoints = data.endpoints ?? []
       if (Object.hasOwn(data, 'tls')) this.tlsConfigs = data.tls ?? []
+      
+      // After setting individual arrays, synchronize the full config with all sections
+      this.syncFullConfig()
+    },
+    
+    // New method to ensure all data is properly synced to config object
+    syncFullConfig() {
+      // Create a full config with all sections synchronized
+      const fullConfig = { ...this.config }
+      
+      // Make sure we have all required sections
+      if (!fullConfig.log) fullConfig.log = DEFAULT_CONFIG.log
+      if (!fullConfig.dns) fullConfig.dns = DEFAULT_CONFIG.dns
+      if (!fullConfig.route) fullConfig.route = DEFAULT_CONFIG.route
+      
+      // Update each section with current state
+      fullConfig.inbounds = this.inbounds
+      fullConfig.outbounds = this.outbounds
+      fullConfig.clients = this.clients
+      fullConfig.tls = this.tlsConfigs
+      
+      // Save the complete config
+      this.config = fullConfig
+      localStorage.setItem("singbox_config", JSON.stringify(fullConfig))
     },
     async loadInbounds(ids: number[]): Promise<Inbound[]> {
       // Return inbounds from local config
@@ -100,8 +132,8 @@ const Data = defineStore('Data', {
     },
     async save (object: string, action: string, data: any, initUsers?: number[]): Promise<boolean> {
       try {
-        // Handle local data management
-        const currentConfig = JSON.parse(localStorage.getItem("singbox_config") || JSON.stringify(DEFAULT_CONFIG))
+        // Instead of re-parsing from localStorage, use current config state to avoid losing data
+        const currentConfig = { ...this.config }
         
         if (object === 'inbounds') {
           if (action === 'new') {
@@ -331,6 +363,9 @@ const Data = defineStore('Data', {
         // Update store data
         this.config = currentConfig
         
+        // Make sure all sections are properly synced
+        this.syncFullConfig()
+        
         push.success({
           title: i18n.global.t('success'),
           duration: 5000,
@@ -351,9 +386,13 @@ const Data = defineStore('Data', {
     // New methods for importing/exporting configs
     exportConfig(): string {
       try {
+        // Make sure everything is synced before we export
+        this.syncFullConfig()
+        
         // Create the base structure for the export config
         const exportConfig: any = {
-          log: this.config.log,
+          log: this.config.log || DEFAULT_CONFIG.log,
+          dns: this.config.dns || DEFAULT_CONFIG.dns,
           inbounds: [],
           outbounds: this.config.outbounds || [],
           route: this.config.route || { rules: [] }
@@ -622,8 +661,24 @@ const Data = defineStore('Data', {
           }
         }
         
+        // Preserve other important sections from the imported config
+        if (parsedConfig.dns) {
+          processedData.config.dns = parsedConfig.dns
+        }
+        
+        if (parsedConfig.route) {
+          processedData.config.route = parsedConfig.route
+        }
+        
+        if (parsedConfig.log) {
+          processedData.config.log = parsedConfig.log
+        }
+        
         // Set the processed data
         this.setNewData(processedData)
+        
+        // Make sure all parts of the config are synced
+        this.syncFullConfig()
         
         push.success({
           title: i18n.global.t('success'),

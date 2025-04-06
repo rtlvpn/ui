@@ -71,7 +71,14 @@ const DEFAULT_TITLE = 'Sing-Box Config UI'
 // Load data initially
 router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
   // Load default data on navigation
-  Data().loadData()
+  const store = Data()
+  store.loadData()
+  
+  // Ensure config is fully synced after a short delay (to allow loadData to complete)
+  setTimeout(() => {
+    store.syncFullConfig()
+  }, 100)
+  
   next()
 })
 
