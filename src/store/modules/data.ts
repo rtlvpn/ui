@@ -400,7 +400,26 @@ const Data = defineStore('Data', {
         
         // Add experimental config if it exists
         if (this.config.experimental) {
-          exportConfig.experimental = { ...this.config.experimental };
+          const exportExperimental = { ...this.config.experimental };
+          
+          // Fix V2Ray API format if it exists
+          if (exportExperimental.v2ray_api) {
+            const v2rayApi = { ...exportExperimental.v2ray_api };
+            
+            // Remove the enabled property from v2ray_api (not in sing-box format)
+            if (v2rayApi.enabled !== undefined) {
+              delete v2rayApi.enabled;
+            }
+            
+            // If v2ray_api has no listen property but was enabled, add a default listen address
+            if (!v2rayApi.listen && exportExperimental.v2ray_api.enabled) {
+              v2rayApi.listen = "127.0.0.1:8080";
+            }
+            
+            exportExperimental.v2ray_api = v2rayApi;
+          }
+          
+          exportConfig.experimental = exportExperimental;
         }
         
         // Process inbounds while keeping internal data intact
@@ -418,9 +437,20 @@ const Data = defineStore('Data', {
             if (originalInbound.tls_id && originalInbound.tls_id > 0) {
               const tlsConfig = this.tlsConfigs.find(t => t.id === originalInbound.tls_id);
               if (tlsConfig) {
-                const cleanTlsConfig = { ...tlsConfig };
+                // Instead of copying the whole tlsConfig structure, extract only the server part
+                // and place its contents directly in the tls object for sing-box compatibility
+                const cleanTlsConfig = { ...(tlsConfig.server || {}) };
+                
+                // Ensure 'enabled' is set if it exists in the server configuration
+                if (cleanTlsConfig.enabled === undefined && tlsConfig.server?.enabled !== undefined) {
+                  cleanTlsConfig.enabled = tlsConfig.server.enabled;
+                }
+                
+                // Remove any UI-specific properties
                 delete cleanTlsConfig.id;
                 delete cleanTlsConfig.tag;
+                
+                // Assign the properly formatted TLS config
                 exportInbound.tls = cleanTlsConfig;
               }
             }
