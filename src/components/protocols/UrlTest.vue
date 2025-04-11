@@ -48,7 +48,7 @@
     </v-row>
     <v-row>
       <v-col cols="12" sm="6">
-        <v-switch v-model="data.interrupt_exist_connections" color="primary" :label="$t('types.lb.interruptConn')" hide-details></v-switch>
+        <Win98Toggle v-model="data.interrupt_exist_connections" color="primary" :label="$t('types.lb.interruptConn')" hide-details></Win98Toggle>
       </v-col>
     </v-row>
     <v-card-actions>
@@ -60,16 +60,16 @@
           <v-card>
             <v-list>
               <v-list-item>
-                <v-switch v-model="optionUrl" color="primary" :label="$t('types.lb.testUrl')" hide-details></v-switch>
+                <Win98Toggle v-model="optionUrl" color="primary" :label="$t('types.lb.testUrl')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionInterval" color="primary" :label="$t('types.lb.interval')" hide-details></v-switch>
+                <Win98Toggle v-model="optionInterval" color="primary" :label="$t('types.lb.interval')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionTolerance" color="primary" :label="$t('types.lb.tolerance')" hide-details></v-switch>
+                <Win98Toggle v-model="optionTolerance" color="primary" :label="$t('types.lb.tolerance')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionIdle" color="primary" :label="$t('transport.idleTimeout')" hide-details></v-switch>
+                <Win98Toggle v-model="optionIdle" color="primary" :label="$t('transport.idleTimeout')" hide-details></Win98Toggle>
               </v-list-item>
             </v-list>
           </v-card>

@@ -92,16 +92,16 @@
         <v-card>
           <v-list>
             <v-list-item>
-              <v-switch v-model="optionRsvConn" color="primary" label="Recv window conn" hide-details></v-switch>
+              <Win98Toggle v-model="optionRsvConn" color="primary" label="Recv window conn" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item v-if="direction=='out'">
-              <v-switch v-model="optionRsvWin" color="primary" label="Recv window" hide-details></v-switch>
+              <Win98Toggle v-model="optionRsvWin" color="primary" label="Recv window" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item v-if="direction=='in'">
-              <v-switch v-model="optionRsvClnt" color="primary" label="Recv window client" hide-details></v-switch>
+              <Win98Toggle v-model="optionRsvClnt" color="primary" label="Recv window client" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item v-if="direction=='in'">
-              <v-switch v-model="optionMaxConn" color="primary" label="Max conn client" hide-details></v-switch>
+              <Win98Toggle v-model="optionMaxConn" color="primary" label="Max conn client" hide-details></Win98Toggle>
             </v-list-item>
           </v-list>
         </v-card>
@@ -112,6 +112,7 @@
 
 <script lang="ts">
 import Network from '@/components/Network.vue'
+import Win98Toggle from '@/components/Win98Toggle.vue'
 
 export default {
   props: ['direction','data'],
@@ -154,6 +155,6 @@ export default {
       set(newValue:number) { this.$props.data.up_mbps = newValue > 0 ? newValue : 0 }
     },
   },
-  components: { Network }
+  components: { Network, Win98Toggle }
 }
 </script>

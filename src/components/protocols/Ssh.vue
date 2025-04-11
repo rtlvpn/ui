@@ -82,16 +82,16 @@
           <v-card>
             <v-list>
               <v-list-item>
-                <v-switch v-model="optionKey" color="primary" label="SSH Key" hide-details></v-switch>
+                <Win98Toggle v-model="optionKey" color="primary" label="SSH Key" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionHostKey" color="primary" :label="$t('types.ssh.hostKey')" hide-details></v-switch>
+                <Win98Toggle v-model="optionHostKey" color="primary" :label="$t('types.ssh.hostKey')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionAlgorithms" color="primary" :label="$t('types.ssh.algorithm')" hide-details></v-switch>
+                <Win98Toggle v-model="optionAlgorithms" color="primary" :label="$t('types.ssh.algorithm')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionVer" color="primary" :label="$t('types.ssh.clientVer')" hide-details></v-switch>
+                <Win98Toggle v-model="optionVer" color="primary" :label="$t('types.ssh.clientVer')" hide-details></Win98Toggle>
               </v-list-item>
             </v-list>
           </v-card>

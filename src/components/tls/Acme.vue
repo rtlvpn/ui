@@ -2,7 +2,7 @@
   <v-card subtitle="ACME" style="background-color: inherit;">
     <v-row>
       <v-col cols="12" sm="6" md="4">
-        <v-switch color="primary" :label="$t('enable')" v-model="enabled" hide-details></v-switch>
+        <Win98Toggle color="primary" :label="$t('enable')" v-model="enabled" hide-details></Win98Toggle>
       </v-col>
       <v-col cols="12" md="8" v-if="enabled">
         <v-text-field
@@ -39,10 +39,10 @@
       </v-row>
       <v-row v-if="optionChallenge">
         <v-col cols="12" sm="6" md="4">
-          <v-switch color="primary" :label="$t('tls.acme.httpChallenge')" v-model="acme.disable_http_challenge" hide-details></v-switch>
+          <Win98Toggle color="primary" :label="$t('tls.acme.httpChallenge')" v-model="acme.disable_http_challenge" hide-details></Win98Toggle>
         </v-col>
         <v-col cols="12" sm="6" md="4">
-          <v-switch color="primary" :label="$t('tls.acme.tlsChallenge')" v-model="acme.disable_tls_alpn_challenge" hide-details></v-switch>
+          <Win98Toggle color="primary" :label="$t('tls.acme.tlsChallenge')" v-model="acme.disable_tls_alpn_challenge" hide-details></Win98Toggle>
         </v-col>
       </v-row>
       <v-row v-if="optionPorts">
@@ -129,28 +129,28 @@
           <v-card>
             <v-list>
               <v-list-item>
-                <v-switch v-model="optionDir" color="primary" :label="$t('tls.acme.dataDir')" hide-details></v-switch>
+                <Win98Toggle v-model="optionDir" color="primary" :label="$t('tls.acme.dataDir')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionDefault" color="primary" :label="$t('tls.acme.defaultDomain')" hide-details></v-switch>
+                <Win98Toggle v-model="optionDefault" color="primary" :label="$t('tls.acme.defaultDomain')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionEmail" color="primary" :label="$t('email')" hide-details></v-switch>
+                <Win98Toggle v-model="optionEmail" color="primary" :label="$t('email')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionChallenge" color="primary" :label="$t('tls.acme.disableChallenges')" hide-details></v-switch>
+                <Win98Toggle v-model="optionChallenge" color="primary" :label="$t('tls.acme.disableChallenges')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionPorts" color="primary" :label="$t('tls.acme.altPorts')" hide-details></v-switch>
+                <Win98Toggle v-model="optionPorts" color="primary" :label="$t('tls.acme.altPorts')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionProvider" color="primary" :label="$t('tls.acme.caProvider')" hide-details></v-switch>
+                <Win98Toggle v-model="optionProvider" color="primary" :label="$t('tls.acme.caProvider')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionExt" color="primary" :label="$t('tls.acme.extAcc')" hide-details></v-switch>
+                <Win98Toggle v-model="optionExt" color="primary" :label="$t('tls.acme.extAcc')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionDns01" color="primary" :label="$t('tls.acme.dns01')" hide-details></v-switch>
+                <Win98Toggle v-model="optionDns01" color="primary" :label="$t('tls.acme.dns01')" hide-details></Win98Toggle>
               </v-list-item>
             </v-list>
           </v-card>

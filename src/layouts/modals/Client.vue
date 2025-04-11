@@ -25,7 +25,7 @@
             <v-window-item value="t1">
               <v-row>
                 <v-col cols="12" sm="6" md="4">
-                  <v-switch color="primary" v-model="client.enable" :label="$t('enable')" hide-details></v-switch>
+                  <Win98Toggle color="primary" v-model="client.enable" :label="$t('enable')" hide-details></Win98Toggle>
                 </v-col>
                 <v-col cols="12" sm="6" md="4">
                   <v-combobox v-model="client.group" :items="groups" :label="$t('client.group')" hide-details></v-combobox>
@@ -192,6 +192,7 @@ import { createClient, randomConfigs, updateConfigs, Link, Client } from '@/type
 import DatePick from '@/components/DateTime.vue'
 import { HumanReadable } from '@/plugins/utils'
 import Data from '@/store/modules/data'
+import Win98Toggle from '@/components/Win98Toggle.vue'
 
 export default {
   props: ['visible', 'id', 'inboundTags', 'groups'],
@@ -274,7 +275,7 @@ export default {
       }
     },
   },
-  components: { DatePick },
+  components: { DatePick, Win98Toggle },
 }
 
 </script>

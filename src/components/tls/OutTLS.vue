@@ -2,16 +2,16 @@
   <v-card :subtitle="$t('objects.tls')">
     <v-row v-if="tlsOptional">
       <v-col cols="12" sm="6" md="4">
-        <v-switch color="primary" :label="$t('tls.enable')" v-model="tlsEnable" hide-details></v-switch>
+        <Win98Toggle color="primary" :label="$t('tls.enable')" v-model="tlsEnable" hide-details></Win98Toggle>
       </v-col>
     </v-row>
     <template v-if="tls.enabled">
       <v-row>
         <v-col cols="12" sm="6" md="4">
-          <v-switch color="primary" :label="$t('tls.disableSni')" v-model="disable_sni" hide-details></v-switch>
+          <Win98Toggle color="primary" :label="$t('tls.disableSni')" v-model="disable_sni" hide-details></Win98Toggle>
         </v-col>
         <v-col cols="12" sm="6" md="4">
-          <v-switch color="primary" :label="$t('tls.insecure')" v-model="insecure" hide-details></v-switch>
+          <Win98Toggle color="primary" :label="$t('tls.insecure')" v-model="insecure" hide-details></Win98Toggle>
         </v-col>
       </v-row>
       <template v-if="optionCert">
@@ -130,10 +130,10 @@
         </v-row>
         <v-row>
           <v-col cols="12" sm="6" md="4">
-            <v-switch color="primary" label="Post-Quantum Schemes" v-model="tls.ech.pq_signature_schemes_enabled" hide-details></v-switch>
+            <Win98Toggle color="primary" label="Post-Quantum Schemes" v-model="tls.ech.pq_signature_schemes_enabled" hide-details></Win98Toggle>
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <v-switch color="primary" label="Disable Adaptive Size" v-model="tls.ech.dynamic_record_sizing_disabled" hide-details></v-switch>
+            <Win98Toggle color="primary" label="Disable Adaptive Size" v-model="tls.ech.dynamic_record_sizing_disabled" hide-details></Win98Toggle>
           </v-col>
         </v-row>
         <v-row>
@@ -182,31 +182,31 @@
           <v-card>
             <v-list>
               <v-list-item>
-                <v-switch v-model="optionCert" color="primary" :label="$t('tls.cert')" hide-details></v-switch>
+                <Win98Toggle v-model="optionCert" color="primary" :label="$t('tls.cert')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionSNI" color="primary" label="SNI" hide-details></v-switch>
+                <Win98Toggle v-model="optionSNI" color="primary" label="SNI" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionALPN" color="primary" label="ALPN" hide-details></v-switch>
+                <Win98Toggle v-model="optionALPN" color="primary" label="ALPN" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionMinV" color="primary" :label="$t('tls.minVer')" hide-details></v-switch>
+                <Win98Toggle v-model="optionMinV" color="primary" :label="$t('tls.minVer')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionMaxV" color="primary" :label="$t('tls.maxVer')" hide-details></v-switch>
+                <Win98Toggle v-model="optionMaxV" color="primary" :label="$t('tls.maxVer')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionCS" color="primary" :label="$t('tls.cs')" hide-details></v-switch>
+                <Win98Toggle v-model="optionCS" color="primary" :label="$t('tls.cs')" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionFP" color="primary" label="UTLS" hide-details></v-switch>
+                <Win98Toggle v-model="optionFP" color="primary" label="UTLS" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionReality" color="primary" label="Reality" hide-details></v-switch>
+                <Win98Toggle v-model="optionReality" color="primary" label="Reality" hide-details></Win98Toggle>
               </v-list-item>
               <v-list-item>
-                <v-switch v-model="optionEch" color="primary" label="ECH" hide-details></v-switch>
+                <Win98Toggle v-model="optionEch" color="primary" label="ECH" hide-details></Win98Toggle>
               </v-list-item>
             </v-list>
           </v-card>

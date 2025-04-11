@@ -129,30 +129,6 @@
   min-height: 24px !important;
 }
 
-.v-switch .v-selection-control__wrapper {
-  height: 24px !important;
-}
-
-.v-switch .v-selection-control__input {
-  transform: scale(0.8) !important;
-}
-
-.v-switch .v-switch__track {
-  background-color: #C0C0C0 !important;
-  border: 1px solid #000000 !important;
-  opacity: 1 !important;
-}
-
-.v-switch .v-switch__thumb {
-  background-color: #DFDFDF !important;
-  border: 1px solid #000000 !important;
-}
-
-.v-switch--indeterminate .v-switch__thumb,
-.v-switch.v-switch--active .v-switch__thumb {
-  background-color: #000080 !important;
-}
-
 /* Add scanlines effect */
 .v-application::after {
   content: "";

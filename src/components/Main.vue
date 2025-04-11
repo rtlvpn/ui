@@ -30,12 +30,14 @@
                   <v-card variant="flat" :title="items.title">
                     <v-list v-for="item in items.value">
                       <v-list-item>
-                        <v-switch
-                        v-model="reloadItems"
-                        :value="item.value"
-                        color="primary"
-                        :label="item.title"
-                        hide-details></v-switch>
+                        <Win98Toggle
+                          :model-value="isItemSelected(item.value)"
+                          @update:model-value="toggleItem(item.value)"
+                          color="primary"
+                          :label="item.title"
+                          :value="item.value"
+                          hide-details
+                        ></Win98Toggle>
                       </v-list-item>
                     </v-list>
                   </v-card>
@@ -156,6 +158,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { i18n } from '@/locales'
 import LogVue from '@/layouts/modals/Logs.vue'
 import Backup from '@/layouts/modals/Backup.vue'
+import Win98Toggle from '@/components/Win98Toggle.vue'
 
 const loading = ref(false)
 const menu = ref(false)
@@ -234,4 +237,18 @@ const restartSingbox = async () => {
   await HttpUtils.post('api/restartSb',{})
   loading.value = false
 }
+
+const isItemSelected = (itemValue: string) => {
+  return reloadItems.value.includes(itemValue);
+};
+
+const toggleItem = (itemValue: string) => {
+  const currentItems = [...reloadItems.value];
+  if (currentItems.includes(itemValue)) {
+    reloadItems.value = currentItems.filter(item => item !== itemValue);
+  } else {
+    currentItems.push(itemValue);
+    reloadItems.value = currentItems;
+  }
+};
 </script>

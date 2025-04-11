@@ -61,13 +61,13 @@
         <v-card>
           <v-list>
             <v-list-item>
-              <v-switch v-model="optionDetour" color="primary" :label="$t('listen.detour')" hide-details></v-switch>
+              <Win98Toggle v-model="optionDetour" color="primary" :label="$t('listen.detour')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionTCP" color="primary" :label="$t('listen.tcpOptions')" hide-details></v-switch>
+              <Win98Toggle v-model="optionTCP" color="primary" :label="$t('listen.tcpOptions')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionUDP" color="primary" :label="$t('listen.udpOptions')" hide-details></v-switch>
+              <Win98Toggle v-model="optionUDP" color="primary" :label="$t('listen.udpOptions')" hide-details></Win98Toggle>
             </v-list-item>
           </v-list>
         </v-card>

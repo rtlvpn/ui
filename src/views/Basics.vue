@@ -11,7 +11,16 @@
       <v-expansion-panel-text>
         <v-row>
           <v-col cols="12" sm="6" md="3" lg="2">
-            <v-switch v-model="appConfig.log.disabled" color="primary" :label="$t('disable')" hide-details></v-switch>
+            <Win98Toggle 
+              :model-value="appConfig.log?.disabled || false" 
+              @update:model-value="value => { 
+                if (!appConfig.log) appConfig.log = {}; 
+                appConfig.log.disabled = value; 
+              }" 
+              color="primary" 
+              :label="$t('disable')" 
+              hide-details
+            ></Win98Toggle>
           </v-col>
           <v-col cols="12" sm="6" md="3" lg="2">
             <v-select
@@ -31,7 +40,16 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" md="3" lg="2">
-            <v-switch v-model="appConfig.log.timestamp" color="primary" :label="$t('basic.log.timestamp')" hide-details></v-switch>
+            <Win98Toggle 
+              :model-value="appConfig.log?.timestamp || false" 
+              @update:model-value="value => { 
+                if (!appConfig.log) appConfig.log = {}; 
+                appConfig.log.timestamp = value; 
+              }" 
+              color="primary" 
+              :label="$t('basic.log.timestamp')" 
+              hide-details
+            ></Win98Toggle>
           </v-col>
         </v-row>
       </v-expansion-panel-text>
@@ -150,7 +168,7 @@
       <v-expansion-panel-text>
         <v-row>
           <v-col cols="12" sm="6" md="3" lg="2">
-            <v-switch v-model="enableNtp" color="primary" :label="$t('enable')" hide-details></v-switch>
+            <Win98Toggle v-model="enableNtp" color="primary" :label="$t('enable')" hide-details></Win98Toggle>
           </v-col>
           <v-col cols="12" sm="6" md="3" lg="2" v-if="appConfig.ntp?.enabled">
             <v-text-field
@@ -180,6 +198,23 @@
             ></v-text-field>
           </v-col>
         </v-row>
+        <Win98Toggle
+          :model-value="appConfig.ntp?.detour ? true : false"
+          @update:model-value="value => { 
+            if (!appConfig.ntp) appConfig.ntp = { 
+              enabled: true,
+              server: 'time.apple.com' // Default server value
+            }; 
+            if (value) {
+              appConfig.ntp.detour = ''; // Or set a default outbound tag
+            } else {
+              delete appConfig.ntp.detour;
+            }
+          }"
+          color="primary" 
+          :label="$t('basic.ntp.useOutbound')"
+          hide-details
+        ></Win98Toggle>
         <Dial :dial="appConfig.ntp" :outTags="outboundTags" v-if="appConfig.ntp?.enabled" />
       </v-expansion-panel-text>
     </v-expansion-panel>
@@ -231,7 +266,7 @@
         <v-divider></v-divider>
         <v-row class="mt-3">
           <v-col cols="12" sm="6" md="3" lg="2">
-            <v-switch v-model="enableCacheFile" color="primary" :label="$t('enable')" hide-details></v-switch>
+            <Win98Toggle v-model="enableCacheFile" color="primary" :label="$t('enable')" hide-details></Win98Toggle>
           </v-col>
           <v-col cols="12" sm="6" md="3" lg="2" v-if="appConfig.experimental.cache_file">
             <v-text-field
@@ -248,10 +283,17 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" md="3" lg="2" v-if="appConfig.experimental.cache_file">
-            <v-switch v-model="appConfig.experimental.cache_file.store_fakeip"
-              color="primary"
-              :label="$t('basic.exp.storeFakeIp')"
-              hide-details></v-switch>
+            <Win98Toggle
+              :model-value="appConfig.experimental?.cache_file?.store_fakeip || false"
+              @update:model-value="value => { 
+                if (!appConfig.experimental) appConfig.experimental = {}; 
+                if (!appConfig.experimental.cache_file) appConfig.experimental.cache_file = {}; 
+                appConfig.experimental.cache_file.store_fakeip = value; 
+              }"
+              color="primary" 
+              :label="$t('basic.cf.storeFakeip')"
+              hide-details
+            ></Win98Toggle>
           </v-col>
         </v-row>
 
@@ -259,7 +301,7 @@
         <v-divider></v-divider>
         <v-row class="mt-3">
           <v-col cols="12" sm="6" md="4">
-            <v-switch v-model="enableV2rayApi" color="primary" :label="$t('enable')" hide-details></v-switch>
+            <Win98Toggle v-model="enableV2rayApi" color="primary" :label="$t('enable')" hide-details></Win98Toggle>
           </v-col>
           <v-col cols="12" sm="6" md="4" v-if="appConfig.experimental.v2ray_api">
             <v-text-field
@@ -274,7 +316,7 @@
         <div class="text-subtitle-1 mt-3 mb-2 ml-4" v-if="appConfig.experimental.v2ray_api">Stats</div>
         <v-row class="mt-3 ml-4" v-if="appConfig.experimental.v2ray_api">
           <v-col cols="12" sm="6" md="4">
-            <v-switch v-model="enableV2rayStats" color="primary" :label="$t('enable')" hide-details></v-switch>
+            <Win98Toggle v-model="enableV2rayStats" color="primary" :label="$t('enable')" hide-details></Win98Toggle>
           </v-col>
           <v-col cols="12" sm="6" md="4" v-if="appConfig.experimental.v2ray_api?.stats">
             <v-select
@@ -318,6 +360,7 @@ import Dial from '@/components/Dial.vue'
 import { computed, ref, onMounted } from 'vue'
 import { Config, Ntp } from '@/types/config'
 import { FindDiff } from '@/plugins/utils'
+import Win98Toggle from '@/components/Win98Toggle.vue'
 
 const oldConfig = ref({})
 const loading = ref(false)

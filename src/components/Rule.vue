@@ -80,7 +80,7 @@
         v-model="ip_cidr"></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" v-if="rule.ip_is_private != undefined">
-        <v-switch v-model="rule.ip_is_private" color="primary" :label="$t('rule.privateIp')" hide-details></v-switch>
+        <Win98Toggle v-model="rule.ip_is_private" color="primary" :label="$t('rule.privateIp')" hide-details></Win98Toggle>
       </v-col>
     </v-row>
     <v-row v-if="optionPort">
@@ -121,7 +121,7 @@
         v-model="source_ip_cidr"></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" v-if="rule.source_ip_is_private != undefined">
-        <v-switch v-model="rule.source_ip_is_private" color="primary" :label="$t('rule.srcPrivateIp')" hide-details></v-switch>
+        <Win98Toggle v-model="rule.source_ip_is_private" color="primary" :label="$t('rule.srcPrivateIp')" hide-details></Win98Toggle>
       </v-col>
     </v-row>
     <v-row v-if="optionSrcPort">
@@ -158,7 +158,7 @@
         ></v-combobox>
       </v-col>
       <v-col cols="12" sm="6">
-        <v-switch v-model="rule.rule_set_ipcidr_match_source" color="primary" :label="$t('rule.rulesetMatchSrc')" hide-details></v-switch>
+        <Win98Toggle v-model="rule.rule_set_ipcidr_match_source" color="primary" :label="$t('rule.rulesetMatchSrc')" hide-details></Win98Toggle>
       </v-col>
     </v-row>
     <v-card-actions>
@@ -170,31 +170,31 @@
         <v-card>
           <v-list>
             <v-list-item>
-              <v-switch v-model="optionInbound" color="primary" :label="$t('pages.inbounds')" hide-details></v-switch>
+              <Win98Toggle v-model="optionInbound" color="primary" :label="$t('pages.inbounds')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionClient" color="primary" :label="$t('pages.clients')" hide-details></v-switch>
+              <Win98Toggle v-model="optionClient" color="primary" :label="$t('pages.clients')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionIPver" color="primary" :label="$t('rule.ipVer')" hide-details></v-switch>
+              <Win98Toggle v-model="optionIPver" color="primary" :label="$t('rule.ipVer')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionProtocol" color="primary" :label="$t('protocol')" hide-details></v-switch>
+              <Win98Toggle v-model="optionProtocol" color="primary" :label="$t('protocol')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionDomain" color="primary" :label="$t('rule.domainRules')" hide-details></v-switch>
+              <Win98Toggle v-model="optionDomain" color="primary" :label="$t('rule.domainRules')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionPort" color="primary" :label="$t('in.port')" hide-details></v-switch>
+              <Win98Toggle v-model="optionPort" color="primary" :label="$t('in.port')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionSrcIP" color="primary" :label="$t('rule.srcIpRules')" hide-details></v-switch>
+              <Win98Toggle v-model="optionSrcIP" color="primary" :label="$t('rule.srcIpRules')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionSrcPort" color="primary" :label="$t('rule.srcPortRules')" hide-details></v-switch>
+              <Win98Toggle v-model="optionSrcPort" color="primary" :label="$t('rule.srcPortRules')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionRuleSet" color="primary" :label="$t('rule.ruleset')" hide-details></v-switch>
+              <Win98Toggle v-model="optionRuleSet" color="primary" :label="$t('rule.ruleset')" hide-details></Win98Toggle>
             </v-list-item>
           </v-list>
         </v-card>

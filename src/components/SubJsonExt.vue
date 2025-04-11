@@ -32,7 +32,7 @@
         </v-select>
       </v-col>
       <v-col cols="12" sm="6" md="3" lg="2">
-        <v-switch v-model="subJsonExt.log.timestamp" color="primary" :label="$t('setting.timestamp')" hide-details />
+        <Win98Toggle v-model="subJsonExt.log.timestamp" color="primary" :label="$t('setting.timestamp')" hide-details />
       </v-col>
     </v-row>
     <v-row v-if="enableDns">
@@ -113,16 +113,16 @@
         <v-card>
           <v-list>
             <v-list-item>
-              <v-switch v-model="enableLog" color="primary" :label="$t('basic.log.title')" hide-details></v-switch>
+              <Win98Toggle v-model="enableLog" color="primary" :label="$t('basic.log.title')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="enableDns" color="primary" label="DNS" hide-details></v-switch>
+              <Win98Toggle v-model="enableDns" color="primary" label="DNS" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="enableInb" color="primary" :label="$t('objects.inbound')" hide-details></v-switch>
+              <Win98Toggle v-model="enableInb" color="primary" :label="$t('objects.inbound')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="enableExp" color="primary" label="Experimental" hide-details></v-switch>
+              <Win98Toggle v-model="enableExp" color="primary" label="Experimental" hide-details></Win98Toggle>
             </v-list-item>
           </v-list>
         </v-card>

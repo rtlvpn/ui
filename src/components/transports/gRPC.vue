@@ -8,12 +8,12 @@
       </v-text-field>
     </v-col>
     <v-col cols="12" sm="6" md="4">
-      <v-switch
-        color="primary"
+      <Win98Toggle
         v-model="transport.permit_without_stream"
-        :label="$t('transport.grpcPws')"
-        hide-details>
-      </v-switch>
+        color="primary"
+        :label="$t('transport.grpc.permitWithoutStream')"
+        hide-details
+      ></Win98Toggle>
     </v-col>
   </v-row>
   <v-row>

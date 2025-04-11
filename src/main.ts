@@ -30,6 +30,8 @@ import '@/styles/y2k-theme.css'
 import { createNotivue } from 'notivue'
 import 'notivue/notification.css'
 import 'notivue/animations.css'
+import Win98Toggle from './components/Win98Toggle.vue'
+
 const notivue = createNotivue({
   position: 'bottom-center',
   limit: 4,
@@ -55,4 +57,5 @@ app
   .use(i18n)
   .use(notivue)
   .component('DatePicker', Vue3PersianDatetimePicker)
+  .component('Win98Toggle', Win98Toggle)
   .mount('#app')

@@ -2,7 +2,7 @@
     <v-card :subtitle="$t('objects.transport')">
     <v-row>
       <v-col cols="12" sm="6" md="4">
-        <v-switch color="primary" :label="$t('transport.enable')" v-model="tpEnable" hide-details></v-switch>
+        <Win98Toggle color="primary" :label="$t('transport.enable')" v-model="tpEnable" hide-details></Win98Toggle>
       </v-col>
       <v-col cols="12" sm="6" md="4" v-if="tpEnable">
         <v-select
@@ -26,6 +26,7 @@ import Http from './transports/Http.vue'
 import WebSocket from './transports/WebSocket.vue'
 import GRPC from './transports/gRPC.vue'
 import HttpUpgrade from './transports/HttpUpgrade.vue'
+import Win98Toggle from './Win98Toggle.vue'
 export default {
   props: ['data'],
   data() {
@@ -46,6 +47,6 @@ export default {
       set(newValue: string) { this.$props.data.transport = { type: newValue } }
     }
   },
-  components: { Http, WebSocket, GRPC, HttpUpgrade }
+  components: { Http, WebSocket, GRPC, HttpUpgrade, Win98Toggle }
 }
 </script>

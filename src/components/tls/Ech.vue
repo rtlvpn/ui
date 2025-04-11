@@ -2,16 +2,16 @@
   <v-card subtitle="ECH" style="background-color: inherit;">
     <v-row>
       <v-col cols="12" sm="6" md="4">
-        <v-switch color="primary" :label="$t('enable')" v-model="enabled" hide-details></v-switch>
+        <Win98Toggle color="primary" :label="$t('enable')" v-model="enabled" hide-details></Win98Toggle>
       </v-col>
     </v-row>
     <template v-if="enabled">
       <v-row>
         <v-col cols="12" sm="6" md="4">
-          <v-switch color="primary" label="Post-Quantum Schemes" v-model="ech.pq_signature_schemes_enabled" hide-details></v-switch>
+          <Win98Toggle color="primary" label="Post-Quantum Schemes" v-model="ech.pq_signature_schemes_enabled" hide-details></Win98Toggle>
         </v-col>
         <v-col cols="12" sm="6" md="4">
-          <v-switch color="primary" label="Disable Adaptive Size" v-model="ech.dynamic_record_sizing_disabled" hide-details></v-switch>
+          <Win98Toggle color="primary" label="Disable Adaptive Size" v-model="ech.dynamic_record_sizing_disabled" hide-details></Win98Toggle>
         </v-col>
       </v-row>
       <v-row>
@@ -81,6 +81,7 @@ import { i18n } from '@/locales'
 import HttpUtils from '@/plugins/httputil'
 import { ech } from '@/types/tls'
 import { push } from 'notivue'
+import Win98Toggle from './Win98Toggle.vue'
 
 export default {
   props: ['iTls','oTls'],

@@ -85,7 +85,7 @@
     </v-row>
     <v-row>
       <v-col cols="12" sm="6" md="4">
-        <v-switch v-model="data.system" color="primary" :label="$t('types.wg.sysIf')" hide-details></v-switch>
+        <Win98Toggle v-model="data.system" color="primary" :label="$t('types.wg.sysIf')" hide-details></Win98Toggle>
       </v-col>
       <v-col cols="12" sm="6" md="4" v-if="data.system">
         <v-text-field
@@ -104,13 +104,13 @@
         <v-card>
           <v-list>
             <v-list-item>
-              <v-switch v-model="optionUdp" color="primary" label="UDP Timeout" hide-details></v-switch>
+              <Win98Toggle v-model="optionUdp" color="primary" label="UDP Timeout" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionWorker" color="primary" :label="$t('types.wg.worker')" hide-details></v-switch>
+              <Win98Toggle v-model="optionWorker" color="primary" :label="$t('types.wg.worker')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionMtu" color="primary" label="MTU" hide-details></v-switch>
+              <Win98Toggle v-model="optionMtu" color="primary" label="MTU" hide-details></Win98Toggle>
             </v-list-item>
           </v-list>
         </v-card>

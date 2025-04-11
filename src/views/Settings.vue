@@ -77,10 +77,10 @@
       <v-window-item value="t2">
         <v-row>
           <v-col cols="12" sm="6" md="4">
-            <v-switch color="primary" v-model="subEncode" :label="$t('setting.subEncode')" hide-details />
+            <Win98Toggle color="primary" v-model="subEncode" :label="$t('setting.subEncode')" hide-details />
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <v-switch color="primary" v-model="subShowInfo" :label="$t('setting.subInfo')" hide-details />
+            <Win98Toggle color="primary" v-model="subShowInfo" :label="$t('setting.subInfo')" hide-details />
           </v-col>
         </v-row>
         <v-row>
@@ -158,6 +158,7 @@ import HttpUtils from '@/plugins/httputil'
 import { FindDiff } from '@/plugins/utils'
 import SubJsonExtVue from '@/components/SubJsonExt.vue'
 import { push } from 'notivue'
+import Win98Toggle from '@/components/Win98Toggle.vue'
 const locale = useLocale()
 const tab = ref("t1")
 const loading:Ref = inject('loading')?? ref(false)

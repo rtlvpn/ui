@@ -94,34 +94,34 @@
         <v-card>
           <v-list>
             <v-list-item>
-              <v-switch v-model="optionDetour" color="primary" :label="$t('listen.detour')" hide-details></v-switch>
+              <Win98Toggle v-model="optionDetour" color="primary" :label="$t('listen.detour')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionBind" color="primary" :label="$t('dial.bindIf')" hide-details></v-switch>
+              <Win98Toggle v-model="optionBind" color="primary" :label="$t('dial.bindIf')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionIPV4" color="primary" :label="$t('dial.bindIp4')" hide-details></v-switch>
+              <Win98Toggle v-model="optionIPV4" color="primary" :label="$t('dial.bindIp4')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionIPV6" color="primary" :label="$t('dial.bindIp6')" hide-details></v-switch>
+              <Win98Toggle v-model="optionIPV6" color="primary" :label="$t('dial.bindIp6')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionRM" color="primary" label="Routing Mark" hide-details></v-switch>
+              <Win98Toggle v-model="optionRM" color="primary" label="Routing Mark" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionRA" color="primary" :label="$t('dial.reuseAddr')" hide-details></v-switch>
+              <Win98Toggle v-model="optionRA" color="primary" :label="$t('dial.reuseAddr')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionTCP" color="primary" :label="$t('listen.tcpOptions')" hide-details></v-switch>
+              <Win98Toggle v-model="optionTCP" color="primary" :label="$t('listen.tcpOptions')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionUDP" color="primary" :label="$t('listen.udpOptions')" hide-details></v-switch>
+              <Win98Toggle v-model="optionUDP" color="primary" :label="$t('listen.udpOptions')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionCT" color="primary" :label="$t('dial.connTimeout')" hide-details></v-switch>
+              <Win98Toggle v-model="optionCT" color="primary" :label="$t('dial.connTimeout')" hide-details></Win98Toggle>
             </v-list-item>
             <v-list-item>
-              <v-switch v-model="optionDS" color="primary" :label="$t('listen.domainStrategy')" hide-details></v-switch>
+              <Win98Toggle v-model="optionDS" color="primary" :label="$t('listen.domainStrategy')" hide-details></Win98Toggle>
             </v-list-item>
           </v-list>
         </v-card>

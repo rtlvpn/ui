@@ -22,7 +22,7 @@
         ></v-combobox>
       </v-col>
       <v-col cols="12" sm="6">
-        <v-switch v-model="data.interrupt_exist_connections" color="primary" :label="$t('types.lb.interruptConn')" hide-details></v-switch>
+        <Win98Toggle v-model="data.interrupt_exist_connections" color="primary" :label="$t('types.lb.interruptConn')" hide-details></Win98Toggle>
       </v-col>
     </v-row>
   </v-card>

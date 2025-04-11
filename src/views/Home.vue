@@ -10,24 +10,6 @@
 
     <v-row justify="center">
       <v-col cols="12" md="10" lg="8">
-        <v-card rounded="xl" elevation="3" class="mb-6">
-          <v-card-title class="text-h5 font-weight-bold">
-            {{ $t('homePage.gettingStarted') }}
-          </v-card-title>
-          <v-card-text>
-            <v-list>
-              <v-list-item v-for="(step, index) in $t('homePage.steps')" :key="index" :prepend-icon="`mdi-numeric-${index + 1}-circle`">
-                <v-list-item-title class="text-subtitle-1 font-weight-medium">
-                  {{ isStep(step) ? step.title : String(step) }}
-                </v-list-item-title>
-                <v-list-item-subtitle class="text-body-2">
-                  {{ isStep(step) ? step.description : '' }}
-                </v-list-item-subtitle>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-        </v-card>
-
         <v-row>
           <v-col cols="12" md="6">
             <v-card rounded="xl" elevation="3" height="100%">

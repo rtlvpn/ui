@@ -8,7 +8,7 @@
       <v-card-text style="padding: 0 16px;">
         <v-row>
           <v-col cols="12" sm="6" md="4">
-            <v-switch color="primary" v-model="logical" :label="$t('rule.logical')" hide-details></v-switch>
+            <Win98Toggle color="primary" v-model="logical" :label="$t('rule.logical')" hide-details></Win98Toggle>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="auto" v-if="logical" justify="center" align="center">
@@ -51,7 +51,7 @@
             ></v-combobox>
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <v-switch color="primary" v-model="ruleData.invert" :label="$t('rule.invert')" hide-details></v-switch>
+            <Win98Toggle color="primary" v-model="ruleData.invert" :label="$t('rule.invert')" hide-details></Win98Toggle>
           </v-col>
         </v-row>
         <v-card subtitle="Route" v-if="ruleData.action == 'route'">
@@ -82,10 +82,10 @@
               </v-text-field>
             </v-col>
             <v-col cols="12" sm="6" md="4">
-              <v-switch v-model="ruleData.udp_disable_domain_unmapping" :label="$t('rule.udpDisableDomainUnmapping')" hide-details></v-switch>
+              <Win98Toggle v-model="ruleData.udp_disable_domain_unmapping" :label="$t('rule.udpDisableDomainUnmapping')" hide-details></Win98Toggle>
             </v-col>
             <v-col cols="12" sm="6" md="4">
-              <v-switch v-model="ruleData.udp_connect" :label="$t('rule.udpConnect')" hide-details></v-switch>
+              <Win98Toggle v-model="ruleData.udp_connect" :label="$t('rule.udpConnect')" hide-details></Win98Toggle>
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field v-model="ruleData.udp_timeout" :label="$t('rule.udpTimeout')" hide-details></v-text-field>
@@ -105,7 +105,7 @@
             </v-select>
             </v-col>
             <v-col cols="12" sm="6" md="4">
-              <v-switch v-model="ruleData.no_drop" :label="$t('rule.noDrop')" hide-details></v-switch>
+              <Win98Toggle v-model="ruleData.no_drop" :label="$t('rule.noDrop')" hide-details></Win98Toggle>
             </v-col>
           </v-row>
         </v-card>
@@ -169,6 +169,7 @@
 <script lang="ts">
 import { logicalRule, rule, actionKeys } from '@/types/rules'
 import RuleOptions from '@/components/Rule.vue'
+import Win98Toggle from '@/components/Win98Toggle.vue'
 export default {
   props: ['visible', 'data', 'index', 'clients', 'inTags', 'outTags', 'rsTags'],
   emits: ['close', 'save'],
@@ -314,7 +315,7 @@ export default {
       }
     },
   },
-  components: { RuleOptions }
+  components: { RuleOptions, Win98Toggle }
 }
 
 </script>

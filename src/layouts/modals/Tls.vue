@@ -139,10 +139,10 @@
             </v-row>
             <v-row>
               <v-col cols="12" sm="6" md="4">
-                <v-switch color="primary" :label="$t('tls.disableSni')" v-model="disableSni" hide-details></v-switch>
+                <Win98Toggle color="primary" :label="$t('tls.disableSni')" v-model="disableSni" hide-details></Win98Toggle>
               </v-col>
               <v-col cols="12" sm="6" md="4">
-                <v-switch color="primary" :label="$t('tls.insecure')" v-model="insecure" hide-details></v-switch>
+                <Win98Toggle color="primary" :label="$t('tls.insecure')" v-model="insecure" hide-details></Win98Toggle>
               </v-col>
             </v-row>
           </template>
@@ -235,28 +235,28 @@
                 <v-list>
                   <template v-if="tlsType == 0">
                     <v-list-item>
-                      <v-switch v-model="optionSNI" color="primary" label="SNI" hide-details></v-switch>
+                      <Win98Toggle v-model="optionSNI" color="primary" label="SNI" hide-details></Win98Toggle>
                     </v-list-item>
                     <v-list-item>
-                      <v-switch v-model="optionALPN" color="primary" label="ALPN" hide-details></v-switch>
+                      <Win98Toggle v-model="optionALPN" color="primary" label="ALPN" hide-details></Win98Toggle>
                     </v-list-item>
                     <v-list-item>
-                      <v-switch v-model="optionMinV" color="primary" :label="$t('tls.minVer')" hide-details></v-switch>
+                      <Win98Toggle v-model="optionMinV" color="primary" :label="$t('tls.minVer')" hide-details></Win98Toggle>
                     </v-list-item>
                     <v-list-item>
-                      <v-switch v-model="optionMaxV" color="primary" :label="$t('tls.maxVer')" hide-details></v-switch>
+                      <Win98Toggle v-model="optionMaxV" color="primary" :label="$t('tls.maxVer')" hide-details></Win98Toggle>
                     </v-list-item>
                     <v-list-item>
-                      <v-switch v-model="optionCS" color="primary" :label="$t('tls.cs')" hide-details></v-switch>
+                      <Win98Toggle v-model="optionCS" color="primary" :label="$t('tls.cs')" hide-details></Win98Toggle>
                     </v-list-item>
                   </template>
                   <template v-else>
                     <v-list-item>
-                      <v-switch v-model="optionTime" color="primary" label="Max Time Difference" hide-details></v-switch>
+                      <Win98Toggle v-model="optionTime" color="primary" label="Max Time Difference" hide-details></Win98Toggle>
                     </v-list-item>
                   </template>
                   <v-list-item>
-                    <v-switch v-model="optionFP" color="primary" label="UTLS" hide-details></v-switch>
+                    <Win98Toggle v-model="optionFP" color="primary" label="UTLS" hide-details></Win98Toggle>
                   </v-list-item>
                 </v-list>
               </v-card>
@@ -296,6 +296,7 @@ import HttpUtils from '@/plugins/httputil'
 import { push } from 'notivue'
 import { i18n } from '@/locales'
 import RandomUtil from '@/plugins/randomUtil'
+import Win98Toggle from '@/components/Win98Toggle.vue'
 export default {
   props: ['visible', 'data', 'id'],
   emits: ['close', 'save'],
@@ -542,6 +543,6 @@ export default {
       }
     },
   },
-  components: { AcmeVue, EchVue }
+  components: { AcmeVue, EchVue, Win98Toggle }
 }
 </script>

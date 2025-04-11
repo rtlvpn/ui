@@ -35,10 +35,10 @@
         <Network :data="data" />
       </v-col>
       <v-col cols="12" sm="6" md="4">
-        <v-switch v-model="data.global_padding" color="primary" :label="$t('types.vmess.globalPadding')" hide-details></v-switch>
+        <Win98Toggle v-model="data.global_padding" color="primary" :label="$t('types.vmess.globalPadding')" hide-details></Win98Toggle>
       </v-col>
       <v-col cols="12" sm="6" md="4">
-        <v-switch v-model="data.authenticated_length" color="primary" :label="$t('types.vmess.authLen')" hide-details></v-switch>
+        <Win98Toggle v-model="data.authenticated_length" color="primary" :label="$t('types.vmess.authLen')" hide-details></Win98Toggle>
       </v-col>
     </v-row>
   </v-card>
@@ -46,6 +46,7 @@
 
 <script lang="ts">
 import Network from '@/components/Network.vue'
+import Win98Toggle from '@/components/Win98Toggle.vue'
 
 export default {
   props: ['data'],
@@ -67,6 +68,6 @@ export default {
       set(newValue:string) { this.$props.data.packet_encoding = newValue != "none" ? newValue : undefined }
     },
   },
-  components: { Network }
+  components: { Network, Win98Toggle }
 }
 </script>

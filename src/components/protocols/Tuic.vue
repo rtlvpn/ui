@@ -21,7 +21,7 @@
         </v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4">
-        <v-switch color="primary" label="UDP Over Stream" v-model="data.udp_over_stream" hide-details></v-switch>
+        <Win98Toggle color="primary" label="UDP Over Stream" v-model="data.udp_over_stream" hide-details></Win98Toggle>
       </v-col>
     </v-row>
     <v-row>
@@ -34,7 +34,7 @@
         </v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4">
-        <v-switch color="primary" label="Zero-RTT Handshake" v-model="data.zero_rtt_handshake" hide-details></v-switch>
+        <Win98Toggle color="primary" label="Zero-RTT Handshake" v-model="data.zero_rtt_handshake" hide-details></Win98Toggle>
       </v-col>
     </v-row>
     <v-row>
@@ -64,6 +64,7 @@
 
 <script lang="ts">
 import Network from '@/components/Network.vue'
+import Win98Toggle from '@/components/Win98Toggle.vue'
 
 export default {
   props: ['direction', 'data'],
@@ -84,6 +85,6 @@ export default {
       set(newValue:number) { this.$props.data.heartbeat = newValue ? newValue + 's' : '' }
     }
   },
-  components: { Network }
+  components: { Network, Win98Toggle }
 }
 </script>
