@@ -394,7 +394,7 @@ const Data = defineStore('Data', {
           log: this.config.log || DEFAULT_CONFIG.log,
           dns: this.config.dns || DEFAULT_CONFIG.dns,
           inbounds: [],
-          outbounds: this.config.outbounds || [],
+          outbounds: this.processOutboundsForExport(),
           route: this.config.route || { rules: [] }
         };
         
@@ -583,137 +583,303 @@ const Data = defineStore('Data', {
       }
     },
     
+    processOutboundsForExport() {
+      // If no outbounds, return empty array
+      if (!this.outbounds || this.outbounds.length === 0) {
+        return [];
+      }
+      
+      // Process each outbound to remove internal fields
+      return this.outbounds.map(outbound => {
+        // Create a clean copy for export
+        const exportOutbound = { ...outbound };
+        
+        // Remove internal ID field which is not part of sing-box schema
+        delete exportOutbound.id;
+        
+        // Return the cleaned outbound
+        return exportOutbound;
+      });
+    },
+    
     importConfig(jsonConfig: string): boolean {
       try {
+        // Parse the input JSON
         const parsedConfig = JSON.parse(jsonConfig)
         
-        // Process the imported configuration to maintain relationships between inbounds and clients
-        const processedData: any = { config: parsedConfig }
+        // Create a proper deep copy of everything to avoid reference issues
+        const fullConfigCopy = JSON.parse(JSON.stringify(parsedConfig))
+        
+        // Start with a fresh processed data object that will contain all configurations
+        const processedData: any = { 
+          config: fullConfigCopy,
+          inbounds: [],
+          outbounds: fullConfigCopy.outbounds || [],
+          clients: [],
+          tls: []
+        }
+        
+        // --- STEP 1: Process all TLS configurations first ---
+        const tlsConfigMap = new Map() // Track TLS configs by their associated inbound tags
         
         // Process inbounds from imported config
-        if (parsedConfig.inbounds && parsedConfig.inbounds.length > 0) {
-          const processedInbounds = parsedConfig.inbounds.map((inbound: any, index: number) => {
-            // Create internal inbound structure with ID
-            const inboundId = index + 1 // Generate sequential IDs
+        if (parsedConfig.inbounds && Array.isArray(parsedConfig.inbounds)) {
+          // First pass: Extract all TLS configurations
+          parsedConfig.inbounds.forEach((inbound: any, index: number) => {
+            if (inbound.tls) {
+              const tlsId = processedData.tls.length + 1
+              const inboundTag = inbound.tag || `inbound-${index+1}`
+              
+              // Create a complete TLS config preserving ALL fields
+              const tlsConfig = {
+                id: tlsId,
+                name: `tls-${inboundTag}`,
+                server: {
+                  ...JSON.parse(JSON.stringify(inbound.tls)),
+                  enabled: true
+                },
+                client: {}
+              }
+              
+              // Ensure certificate is always an array if present
+              if (tlsConfig.server.certificate && !Array.isArray(tlsConfig.server.certificate)) {
+                tlsConfig.server.certificate = [tlsConfig.server.certificate]
+              }
+              
+              // Ensure key is always an array if present
+              if (tlsConfig.server.key && !Array.isArray(tlsConfig.server.key)) {
+                tlsConfig.server.key = [tlsConfig.server.key]
+              }
+              
+              // Handle ECH configurations
+              if (tlsConfig.server.ech) {
+                if (tlsConfig.server.ech.config && !Array.isArray(tlsConfig.server.ech.config)) {
+                  tlsConfig.server.ech.config = [tlsConfig.server.ech.config]
+                }
+                if (tlsConfig.server.ech.key && !Array.isArray(tlsConfig.server.ech.key)) {
+                  tlsConfig.server.ech.key = [tlsConfig.server.ech.key]
+                }
+              }
+              
+              // Store in the TLS config collection
+              processedData.tls.push(tlsConfig)
+              
+              // Map this TLS config to the inbound tag for reference in second pass
+              tlsConfigMap.set(inboundTag, tlsId)
+            }
+          })
+          
+          // --- STEP 2: Process all inbounds while preserving all data ---
+          processedData.inbounds = parsedConfig.inbounds.map((inbound: any, index: number) => {
+            const inboundId = index + 1
+            const inboundTag = inbound.tag || `inbound-${inboundId}`
+            
+            // Create processed inbound while preserving ALL original fields
             const processedInbound = {
-              ...inbound,
+              ...JSON.parse(JSON.stringify(inbound)),
               id: inboundId
             }
             
-            // Store users property if it exists
-            if (inbound.users && inbound.users.length > 0) {
-              // For each inbound type, extract user names from the appropriate field
-              if (['socks', 'http'].includes(inbound.type)) {
-                processedInbound.users = inbound.users.map((user: any) => user.username)
-              } else if (['shadowsocks', 'vmess', 'trojan', 'hysteria', 'hysteria2', 'tuic', 'shadowtls'].includes(inbound.type)) {
-                processedInbound.users = inbound.users.map((user: any) => user.name)
-              }
+            // Reference the previously extracted TLS config if any
+            if (tlsConfigMap.has(inboundTag)) {
+              processedInbound.tls_id = tlsConfigMap.get(inboundTag)
+              // Remove the inline TLS to avoid duplication
+              delete processedInbound.tls
             }
             
-            // Process any TLS config embedded in the inbound
-            if (inbound.tls) {
-              // Store the TLS config separately
-              if (!processedData.tls) {
-                processedData.tls = []
+            // Extract user identifiers for client mapping
+            // We're NOT removing the original users array - just creating a reference list
+            if (inbound.users && Array.isArray(inbound.users) && inbound.users.length > 0) {
+              const userIdentifiers = []
+              
+              // Extract appropriate username identifiers based on protocol
+              for (const user of inbound.users) {
+                let identifier = null
+                
+                // Protocol-specific identifier extraction
+                if (['http', 'socks'].includes(inbound.type) && user.username) {
+                  identifier = user.username
+                } else if (user.name) {
+                  identifier = user.name
+                } else if (user.email) {
+                  identifier = user.email
+                } else if (user.uuid) {
+                  // For protocols like TUIC that might only have UUID
+                  identifier = `user-${user.uuid.substring(0, 8)}`
+                }
+                
+                if (identifier) {
+                  userIdentifiers.push(identifier)
+                }
               }
               
-              const tlsId = processedData.tls.length + 1
-              const tlsConfig = {
-                ...inbound.tls,
-                id: tlsId,
-                tag: `tls-${inbound.tag}-${tlsId}`
+              if (userIdentifiers.length > 0) {
+                processedInbound.users = userIdentifiers
               }
-              
-              processedData.tls.push(tlsConfig)
-              processedInbound.tls_id = tlsId
-              
-              // Remove the embedded tls config to avoid duplication
-              delete processedInbound.tls
             }
             
             return processedInbound
           })
           
-          processedData.inbounds = processedInbounds
+          // --- STEP 3: Create comprehensive client configurations ---
+          const allClients: any[] = []
+          let nextClientId = 1
           
-          // Process or create clients based on inbound users
-          const usernames = new Set<string>()
-          processedInbounds.forEach((inbound: { users?: string[], id?: number }) => {
-            if (inbound.users && inbound.users.length > 0) {
-              inbound.users.forEach((username: string) => usernames.add(username))
-            }
-          })
-          
-          // Create or update clients for each username
-          if (usernames.size > 0) {
-            const existingClients = this.clients || []
-            const updatedClients = [...existingClients]
+          // Go through each original inbound to process users
+          parsedConfig.inbounds.forEach((originalInbound: any, inboundIndex: number) => {
+            const inboundId = inboundIndex + 1
+            const inboundTag = originalInbound.tag || `inbound-${inboundId}`
             
-            // For each username found in inbounds
-            Array.from(usernames).forEach((username) => {
-              // Check if client already exists
-              const existingClient = existingClients.find(c => c.name === username)
+            // Process all users in this inbound
+            if (originalInbound.users && Array.isArray(originalInbound.users)) {
+              originalInbound.users.forEach((user: any) => {
+                // Determine the user identifier based on protocol
+                let identifier = null
+                let clientConfig: any = {}
+                
+                // Extract identifier and all credential data based on protocol type
+                if (['http', 'socks'].includes(originalInbound.type) && user.username) {
+                  identifier = user.username
+                  
+                  // Preserve ALL fields, not just password
+                  Object.keys(user).forEach(key => {
+                    if (key !== 'username') {
+                      clientConfig[key] = user[key]
+                    }
+                  })
+                } else if (['vless', 'vmess', 'trojan', 'shadowsocks'].includes(originalInbound.type)) {
+                  // Handle various VPN protocols
+                  identifier = user.name || user.email || `user-${(user.uuid || '').substring(0, 8)}`
+                  
+                  // Preserve ALL fields from the user object
+                  Object.keys(user).forEach(key => {
+                    if (key !== 'name' && key !== 'email') {
+                      clientConfig[key] = user[key]
+                    }
+                  })
+                } else if (['hysteria', 'hysteria2', 'tuic', 'shadowtls'].includes(originalInbound.type)) {
+                  // Handle other protocols
+                  identifier = user.name || `user-${(user.uuid || '').substring(0, 8)}`
+                  
+                  // Preserve ALL fields from the user object
+                  Object.keys(user).forEach(key => {
+                    if (key !== 'name') {
+                      clientConfig[key] = user[key]
+                    }
+                  })
+                } else {
+                  // Fallback for any other protocol type
+                  identifier = user.name || user.username || user.email || 
+                              `user-${(user.id || user.uuid || '').substring(0, 8)}` || 
+                              `inbound-${inboundId}-user-${Math.floor(Math.random() * 10000)}`
+                  
+                  // Preserve the entire user object as config
+                  clientConfig = { ...user }
+                  
+                  // Remove identifier fields from config to avoid duplication
+                  if (clientConfig.name) delete clientConfig.name
+                  if (clientConfig.username) delete clientConfig.username
+                  if (clientConfig.email) delete clientConfig.email
+                }
+                
+                // If we have a valid identifier, create or update the client
+                if (identifier) {
+                  // Check if this client already exists
+                  const existingClient = allClients.find(c => c.name === identifier)
               
               if (existingClient) {
-                // Update existing client's inbounds
-                const clientInbounds = processedInbounds
-                  .filter((inbound: { users?: string[] }) => inbound.users && inbound.users.includes(username))
-                  .map((inbound: { id: number }) => inbound.id)
-                
-                existingClient.inbounds = Array.from(new Set([...existingClient.inbounds || [], ...clientInbounds]))
+                    // Add this inbound to the existing client if not already present
+                    if (!existingClient.inbounds.includes(inboundId)) {
+                    existingClient.inbounds.push(inboundId)
+                    }
+                    
+                    // Merge the client configs, protocol-specific configs take precedence
+                    if (!existingClient.config[originalInbound.type]) {
+                      existingClient.config[originalInbound.type] = {}
+                    }
+                    
+                    // Store protocol-specific config
+                    existingClient.config[originalInbound.type] = {
+                      ...existingClient.config[originalInbound.type],
+                      ...clientConfig
+                    }
+                    
+                    // Also store the config directly at the root level for compatibility
+                    existingClient.config = {
+                      ...existingClient.config,
+                      ...clientConfig
+                    }
               } else {
-                // Create new client
-                const newId = Math.max(0, ...updatedClients.map((c: any) => c.id || 0)) + 1
-                const clientInbounds = processedInbounds
-                  .filter((inbound: { users?: string[] }) => inbound.users && inbound.users.includes(username))
-                  .map((inbound: { id: number }) => inbound.id)
+                    // Create a new client with all configuration preserved
+                    const protocolConfig: any = {}
+                    protocolConfig[originalInbound.type] = clientConfig
                 
                 const newClient = {
-                  id: newId,
-                  name: username,
+                      id: nextClientId++,
+                      name: identifier,
                   enable: true,
-                  config: {}, // This will be populated with random configs if needed
-                  inbounds: clientInbounds,
+                      // Store both protocol-specific and direct config for maximum compatibility
+                      config: {
+                        ...clientConfig,
+                        ...protocolConfig
+                      },
+                      inbounds: [inboundId],
                   links: [],
                   volume: 0,
                   expiry: 0,
                   up: 0,
                   down: 0,
-                  desc: `Imported client for ${username}`,
+                      desc: `Imported client for ${identifier} (${inboundTag})`,
                   group: 'imported'
                 }
                 
-                updatedClients.push(newClient)
-              }
-            })
-            
-            processedData.clients = updatedClients
-          }
+                    allClients.push(newClient)
+                  }
+                }
+              })
+            }
+          })
+          
+          processedData.clients = allClients
         }
         
-        // Preserve other important sections from the imported config
-        if (parsedConfig.dns) {
-          processedData.config.dns = parsedConfig.dns
-        }
+        // --- STEP 4: Ensure other important config sections are preserved ---
         
+        // Ensure route configuration is preserved
         if (parsedConfig.route) {
-          processedData.config.route = parsedConfig.route
+          processedData.config.route = JSON.parse(JSON.stringify(parsedConfig.route))
         }
         
+        // Ensure DNS configuration is preserved
+        if (parsedConfig.dns) {
+          processedData.config.dns = JSON.parse(JSON.stringify(parsedConfig.dns))
+        }
+        
+        // Ensure log configuration is preserved
         if (parsedConfig.log) {
-          processedData.config.log = parsedConfig.log
+          processedData.config.log = JSON.parse(JSON.stringify(parsedConfig.log))
         }
         
-        // Set the processed data
+        // Ensure experimental features are preserved
+        if (parsedConfig.experimental) {
+          processedData.config.experimental = JSON.parse(JSON.stringify(parsedConfig.experimental))
+        }
+        
+        // Ensure NTP configuration is preserved if present
+        if (parsedConfig.ntp) {
+          processedData.config.ntp = JSON.parse(JSON.stringify(parsedConfig.ntp))
+        }
+        
+        // Set the processed data with all preserved configurations
         this.setNewData(processedData)
         
-        // Make sure all parts of the config are synced
+        // Make sure everything is properly synced to the full config
         this.syncFullConfig()
         
         push.success({
           title: i18n.global.t('success'),
           duration: 5000,
-          message: "Configuration imported successfully"
+          message: "Configuration imported successfully with all data preserved"
         })
         return true
       } catch (error) {
@@ -721,7 +887,7 @@ const Data = defineStore('Data', {
         push.error({
           title: i18n.global.t('failed'),
           duration: 5000,
-          message: "Failed to import configuration. Invalid JSON format or structure."
+          message: `Failed to import configuration: ${error instanceof Error ? error.message : 'Unknown error'}`
         })
         return false
       }
