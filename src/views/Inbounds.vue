@@ -189,3 +189,28 @@ const closeStats = () => {
   stats.value.visible = false
 }
 </script>
+
+<style>
+/* Add these styles at the end of your Inbounds.vue file */
+.v-col .v-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.v-card-subtitle {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.v-card-actions {
+  margin-top: auto;
+  justify-content: center;
+}
+
+/* Fix for address display */
+.v-card-text {
+  font-family: 'VT323', monospace !important;
+  color: black !important;
+}
+</style>

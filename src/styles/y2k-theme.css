@@ -35,8 +35,8 @@
   font-family: 'Press Start 2P', cursive !important;
 }
 
-/* Windows 98 style card styling */
-.v-card {
+/* Override Vuetify's card styles with higher specificity */
+.v-application .v-card {
   border: 2px solid #000000 !important;
   border-radius: 0 !important;
   box-shadow: 
@@ -45,10 +45,11 @@
     inset -2px -2px grey,
     inset 2px 2px white !important;
   background-color: #C0C0C0 !important;
+  overflow: hidden !important;
 }
 
-/* Windows 98 style card title bar */
-.v-card-title {
+/* Fix card title specificity */
+.v-application .v-card .v-card-title {
   background: linear-gradient(90deg, #000080, #1084d0) !important;
   color: white !important;
   font-weight: bold !important;
@@ -56,10 +57,17 @@
   padding: 2px 4px !important;
   display: flex !important;
   align-items: center !important;
+  font-family: 'VT323', monospace !important;
 }
 
-/* Windows 98 style buttons */
-.v-btn {
+/* Fix card content specificity */
+.v-application .v-card .v-card-text {
+  background-color: #C0C0C0 !important;
+  font-family: 'VT323', monospace !important;
+}
+
+/* Make sure v-btn components inside cards maintain proper styling */
+.v-application .v-card .v-btn {
   border-radius: 0 !important;
   background-color: #C0C0C0 !important;
   box-shadow: 
@@ -75,6 +83,7 @@
   transition: none !important;
 }
 
+/* Windows 98 style buttons */
 .v-btn:active {
   box-shadow: 
     inset 1px 1px #0a0a0a,

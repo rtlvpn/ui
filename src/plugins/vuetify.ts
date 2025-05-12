@@ -22,7 +22,11 @@ export default createVuetify({
       style: 'text-transform: none; border-radius: 0; box-shadow: 3px 3px 0px #000000;'
     },
     VCard: {
-      style: 'border: 2px solid #000000; border-radius: 0; box-shadow: 5px 5px 0px #000000;'
+      style: 'border: 2px solid #000000; border-radius: 0; box-shadow: 5px 5px 0px #000000;',
+      class: 'y2k-card'  // Add a custom class to help with styling
+    },
+    VCardTitle: {
+      class: 'y2k-card-title'  // Add a custom class
     },
     VTextField: {
       style: 'border-radius: 0; background-color: #FFFFFF; border: 2px solid #000000;'

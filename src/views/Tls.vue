@@ -56,7 +56,7 @@
             <v-icon />
             <v-tooltip activator="parent" location="top" :text="$t('actions.edit')"></v-tooltip>
           </v-btn>
-          <v-btn v-if="tlsInbounds(item.id).length == 0" icon="mdi-file-remove" style="margin-inline-start:0;" color="warning" @click="delOverlay[index] = true">
+          <v-btn icon="mdi-file-remove" style="margin-inline-start:0;" color="warning" @click="delOverlay[index] = true">
             <v-icon />
             <v-tooltip activator="parent" location="top" :text="$t('actions.del')"></v-tooltip>
           </v-btn>
@@ -134,8 +134,26 @@ const saveModal = async (data:tls) => {
 
 const delTls = async (id: number) => {
   const index = tlsConfigs.value.findIndex(t => t.id == id)
+  const inboundsUsingTls = tlsInbounds(id)
+  
+  // If there are inbounds using this TLS config
+  if (inboundsUsingTls.length > 0) {
+    // Reset the tls_id for all inbounds using this TLS config
+    for (const inbound of inbounds.value) {
+      if (inbound.tls_id === id) {
+        inbound.tls_id = 0 // Set to default (no TLS)
+      }
+    }
+    
+    // Save the modified inbounds first
+    await Data().save("config", "edit", { inbounds: inbounds.value })
+  }
+  
+  // Now delete the TLS config
   const success = await Data().save("tls", "del", id)
-  if (success) delOverlay.value[index] = false
+  if (success) {
+    delOverlay.value[index] = false
+  }
 }
 
 </script>

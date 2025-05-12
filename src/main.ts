@@ -25,6 +25,7 @@ import Vue3PersianDatetimePicker from 'vue3-persian-datetime-picker'
 
 // Custom Y2K Theme
 import '@/styles/y2k-theme.css'
+import '@/styles/vuetify-overrides.css'
 
 // Notivue
 import { createNotivue } from 'notivue'

@@ -245,7 +245,7 @@ const Data = defineStore('Data', {
               currentConfig.tls = this.tlsConfigs
             }
           } else if (action === 'del') {
-            this.tlsConfigs = this.tlsConfigs.filter((t: any) => t.tag !== data)
+            this.tlsConfigs = this.tlsConfigs.filter((t: any) => t.id !== data)
             currentConfig.tls = this.tlsConfigs
           }
         } else if (object === 'config') {

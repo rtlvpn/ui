@@ -1,0 +1,35 @@
+/* Vuetify-specific overrides */
+.v-card__title {
+  background: linear-gradient(90deg, #000080, #1084d0) !important;
+  color: white !important;
+}
+
+.v-card__text,
+.v-card__subtitle {
+  background-color: #C0C0C0 !important;
+}
+
+/* Fix the tooltip and overlay z-index */
+.v-tooltip, 
+.v-overlay {
+  z-index: 9997 !important;
+}
+
+/* Fix scrollable areas */
+.v-card__text {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Fix specific styles for the inbounds cards */
+.y2k-card {
+  margin: 8px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.y2k-card-title {
+  font-weight: bold !important;
+  height: 32px !important;
+} 
