@@ -496,4 +496,16 @@ export default {
     invalidFile: "Invalid JSON file",
     noData: "No configuration data to import"
   },
+  serverImport: {
+    title: "Import from Server",
+    description: "Connect to a sing-box server API and fetch the configuration directly.",
+    serverIp: "Server IP Address",
+    serverPort: "Server Port",
+    configPath: "Config File Path (Optional)",
+    fetchConfig: "Fetch Configuration from Server",
+    fetchSuccess: "Configuration successfully fetched from server",
+    fetchError: "Failed to fetch configuration: {error}",
+    noServerIp: "Please enter a server IP address",
+    noServerPort: "Please enter a server port"
+  },
 }

@@ -47,6 +47,60 @@
     <v-row class="mt-6">
       <v-col cols="12">
         <v-card rounded="xl" elevation="5">
+          <v-card-title>{{ $t('serverImport.title') }}</v-card-title>
+          <v-card-text>
+            <p>{{ $t('serverImport.description') }}</p>
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="serverIp"
+                  :label="$t('serverImport.serverIp')"
+                  outlined
+                  hide-details="auto"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="serverPort"
+                  :label="$t('serverImport.serverPort')"
+                  outlined
+                  hide-details="auto"
+                  type="number"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row class="mt-2">
+              <v-col cols="12" sm="12">
+                <v-text-field
+                  v-model="configPath"
+                  :label="$t('serverImport.configPath')"
+                  outlined
+                  hide-details="auto"
+                  placeholder="/path/to/config.json"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row class="mt-3">
+              <v-col cols="12">
+                <v-btn
+                  color="primary"
+                  block
+                  @click="fetchServerConfig"
+                  :loading="isLoading"
+                  prepend-icon="mdi-server-network"
+                >
+                  {{ $t('serverImport.fetchConfig') }}
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row class="mt-6">
+      <v-col cols="12">
+        <v-card rounded="xl" elevation="5">
           <v-card-title>{{ $t('importConfig.title') }}</v-card-title>
           <v-card-text>
             <p>{{ $t('importConfig.description') }}</p>
@@ -93,6 +147,12 @@ const configJson = ref('')
 const importJson = ref('')
 const importFile = ref<File | null>(null)
 
+// Server import fields
+const serverIp = ref('127.0.0.1')
+const serverPort = ref('8081')
+const configPath = ref('')
+const isLoading = ref(false)
+
 // Get the configuration in JSON format
 const updateConfigJson = () => {
   configJson.value = Data().exportConfig()
@@ -136,6 +196,63 @@ const downloadConfig = () => {
     title: i18n.global.t('success'),
     message: i18n.global.t('exportConfig.downloadStarted')
   })
+}
+
+// Fetch config from server using the correct endpoint
+const fetchServerConfig = async () => {
+  if (!serverIp.value) {
+    push.warning({
+      title: i18n.global.t('warning'),
+      message: i18n.global.t('serverImport.noServerIp')
+    })
+    return
+  }
+  
+  if (!serverPort.value) {
+    push.warning({
+      title: i18n.global.t('warning'),
+      message: i18n.global.t('serverImport.noServerPort')
+    })
+    return
+  }
+  
+  isLoading.value = true
+  
+  try {
+    // Construct the URL with the exact endpoint from the documentation
+    let url = `http://${serverIp.value}:${serverPort.value}/config/get`
+    
+    // Add path parameter if provided
+    if (configPath.value) {
+      url += `?path=${encodeURIComponent(configPath.value)}`
+    }
+    
+    // Fetch the config from the server using the documented endpoint
+    const response = await fetch(url)
+    
+    if (!response.ok) {
+      throw new Error(`Server returned ${response.status}: ${response.statusText}`)
+    }
+    
+    const data = await response.text()
+    
+    // Set the fetched config to the import textarea
+    importJson.value = data
+    
+    push.success({
+      title: i18n.global.t('success'),
+      message: i18n.global.t('serverImport.fetchSuccess')
+    })
+  } catch (error) {
+    console.error('Error fetching server config:', error)
+    push.error({
+      title: i18n.global.t('failed'),
+      duration: 5000,
+      message: i18n.global.t('serverImport.fetchError', { error: error instanceof Error ? error.message : String(error) })
+    })
+  } finally {
+    isLoading.value = false
+  }
 }
 
 // Handle file upload
