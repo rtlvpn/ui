@@ -11,6 +11,10 @@
   "dependencies": {
     "@achrinza/node-ipc": "github:achrinza/node-ipc",
     "@mdi/font": "7.4.47",
+    "@noble/curves": "^1.9.1",
+    "@noble/ed25519": "^2.0.0",
+    "@noble/hashes": "^1.8.0",
+    "@scure/base": "^1.2.5",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
     "clipboard": "^2.0.11",

@@ -55,6 +55,8 @@ import Warp from '@/components/protocols/Warp.vue'
 import HttpUtils from '@/plugins/httputil'
 import { push } from 'notivue'
 import { i18n } from '@/locales'
+import { CryptoService } from '@/services/crypto-service'
+
 export default {
   props: ['visible', 'data', 'id', 'tags'],
   emits: ['close', 'save'],
@@ -111,26 +113,30 @@ export default {
       this.$emit('save', this.endpoint)
       this.loading = false
     },
-    async genWgKey(){
-      this.loading = true
-      const msg = await HttpUtils.get('api/keypairs', { k: "wireguard" })
-      this.loading = false
-      let result = { private_key: "", public_key: "" }
-      if (msg.success) {
-        msg.obj.forEach((line:string) => {
-          if (line.startsWith("PrivateKey")){
-            result.private_key = line.substring(12)
+    async genWgKey() {
+      this.loading = true;
+      let result = { private_key: "", public_key: "" };
+      
+      try {
+        const keyLines = CryptoService.generateWireGuardKeypair();
+        
+        keyLines.forEach((line: string) => {
+          if (line.startsWith("PrivateKey")) {
+            result.private_key = line.substring(12);
           }
-          if (line.startsWith("PublicKey")){
-            result.public_key = line.substring(11)
+          if (line.startsWith("PublicKey")) {
+            result.public_key = line.substring(11);
           }
-        })
-      } else {
+        });
+      } catch (error: any) {
         push.error({
-          message: i18n.global.t('error') + ": " + msg.obj
-        })
+          message: i18n.global.t('error') + ": " + (error.message || String(error))
+        });
+      } finally {
+        this.loading = false;
       }
-      return result
+      
+      return result;
     },
     async newWgKey(){
       const newKeys = await this.genWgKey()
@@ -138,12 +144,16 @@ export default {
       this.options.public_key = newKeys.public_key
     },
     async getWgPubKey(private_key: string) {
-      this.loading = true
-      const msg = await HttpUtils.get('api/keypairs', { k: "wireguard", o: private_key })
-      if (msg.success) {
-        this.options.public_key = msg.obj        
+      this.loading = true;
+      try {
+        this.options.public_key = CryptoService.getWireGuardPublicKey(private_key);
+      } catch (error: any) {
+        push.error({
+          message: i18n.global.t('error') + ": " + (error.message || String(error))
+        });
+      } finally {
+        this.loading = false;
       }
-      this.loading = false
     }
   },
   watch: {

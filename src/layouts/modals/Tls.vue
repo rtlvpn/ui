@@ -297,6 +297,8 @@ import { push } from 'notivue'
 import { i18n } from '@/locales'
 import RandomUtil from '@/plugins/randomUtil'
 import Win98Toggle from '@/components/Win98Toggle.vue'
+import { CryptoService } from '@/services/crypto-service'
+
 export default {
   props: ['visible', 'data', 'id'],
   emits: ['close', 'save'],
@@ -431,25 +433,54 @@ export default {
         }
       }
     },
-    async genRealityKey(){
-      this.loading = true
-      const msg = await HttpUtils.get('api/keypairs', { k: "reality" })
-      this.loading = false
-      if (msg.success) {
-        msg.obj.forEach((line:string) => {
-          if (this.inTls.reality && this.outTls.reality){
-            if (line.startsWith("PrivateKey")){
-              this.inTls.reality.private_key = line.substring(12)
+    async genRealityKey() {
+      this.loading = true;
+      try {
+        const keyLines = await CryptoService.generateRealityKeypair();
+        
+        if (this.inTls?.reality && this.outTls?.reality) {
+          keyLines.forEach((line: string) => {
+            if (line.startsWith("PrivateKey")) {
+              this.inTls.reality!.private_key = line.substring(12);
             }
-            if (line.startsWith("PublicKey")){
-              this.outTls.reality.public_key = line.substring(11)
+            if (line.startsWith("PublicKey")) {
+              this.outTls.reality!.public_key = line.substring(11);
             }
+          });
+        } else {
+          console.warn('Reality objects not properly initialized');
+          if (!this.inTls.reality) {
+            this.inTls.reality = {
+              enabled: true,
+              handshake: { server: '', server_port: 443 },
+              private_key: '',
+              short_id: []
+            };
           }
-        })
-      } else {
+          
+          if (!this.outTls.reality) {
+            this.outTls.reality = {
+              enabled: true,
+              public_key: '',
+              short_id: ''
+            };
+          }
+          
+          keyLines.forEach((line: string) => {
+            if (line.startsWith("PrivateKey")) {
+              this.inTls.reality!.private_key = line.substring(12);
+            }
+            if (line.startsWith("PublicKey")) {
+              this.outTls.reality!.public_key = line.substring(11);
+            }
+          });
+        }
+      } catch (error: any) {
         push.error({
-          message: i18n.global.t('error') + ": " + msg.obj
-        })
+          message: i18n.global.t('error') + ": " + (error.message || String(error))
+        });
+      } finally {
+        this.loading = false;
       }
     },
     randomSID(){
