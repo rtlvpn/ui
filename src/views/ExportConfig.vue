@@ -50,8 +50,33 @@
           <v-card-title>{{ $t('serverImport.title') }}</v-card-title>
           <v-card-text>
             <p>{{ $t('serverImport.description') }}</p>
+            <v-row class="mb-3">
+              <v-col cols="12">
+                <v-select
+                  v-model="selectedSavedServer"
+                  :items="savedServersForSelect"
+                  :label="$t('serverImport.savedServers')"
+                  item-title="name"
+                  item-value="id"
+                  prepend-inner-icon="mdi-server-network"
+                  @update:model-value="loadSavedServer"
+                  clearable
+                  outlined
+                >
+                  <template v-slot:append>
+                    <v-icon 
+                      color="error" 
+                      @click="deleteSelectedServer"
+                      v-if="selectedSavedServer"
+                    >
+                      mdi-delete
+                    </v-icon>
+                  </template>
+                </v-select>
+              </v-col>
+            </v-row>
             <v-row>
-              <v-col cols="12" sm="6">
+              <v-col cols="12" sm="6" md="5">
                 <v-text-field
                   v-model="serverIp"
                   :label="$t('serverImport.serverIp')"
@@ -59,7 +84,7 @@
                   hide-details="auto"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" sm="6">
+              <v-col cols="12" sm="6" md="3">
                 <v-text-field
                   v-model="serverPort"
                   :label="$t('serverImport.serverPort')"
@@ -68,9 +93,18 @@
                   type="number"
                 ></v-text-field>
               </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="serverName"
+                  :label="$t('serverImport.serverName')"
+                  outlined
+                  hide-details="auto"
+                  placeholder="My Server"
+                ></v-text-field>
+              </v-col>
             </v-row>
             <v-row class="mt-2">
-              <v-col cols="12" sm="12">
+              <v-col cols="12">
                 <v-text-field
                   v-model="configPath"
                   :label="$t('serverImport.configPath')"
@@ -81,13 +115,23 @@
               </v-col>
             </v-row>
             <v-row class="mt-3">
-              <v-col cols="12">
+              <v-col cols="12" sm="6">
+                <v-btn
+                  color="secondary"
+                  block
+                  @click="saveServerConfig"
+                  prepend-icon="mdi-content-save"
+                >
+                  {{ $t('serverImport.saveServer') }}
+                </v-btn>
+              </v-col>
+              <v-col cols="12" sm="6">
                 <v-btn
                   color="primary"
                   block
                   @click="fetchServerConfig"
                   :loading="isLoading"
-                  prepend-icon="mdi-server-network"
+                  prepend-icon="mdi-download"
                 >
                   {{ $t('serverImport.fetchConfig') }}
                 </v-btn>
@@ -151,7 +195,137 @@ const importFile = ref<File | null>(null)
 const serverIp = ref('127.0.0.1')
 const serverPort = ref('8081')
 const configPath = ref('')
+const serverName = ref('')
 const isLoading = ref(false)
+
+// Saved servers
+interface SavedServer {
+  id: string;
+  name: string;
+  ip: string;
+  port: string;
+  path: string;
+}
+
+const savedServers = ref<SavedServer[]>([])
+const selectedSavedServer = ref<string | null>(null)
+
+// Transform saved servers for v-select
+const savedServersForSelect = computed(() => {
+  return savedServers.value.map(server => ({
+    id: server.id,
+    name: `${server.name} (${server.ip}:${server.port})`
+  }))
+})
+
+// Load saved servers from localStorage
+const loadSavedServers = () => {
+  const storedServers = localStorage.getItem('savedServers')
+  if (storedServers) {
+    try {
+      savedServers.value = JSON.parse(storedServers)
+    } catch (error) {
+      console.error('Error parsing saved servers', error)
+      savedServers.value = []
+    }
+  }
+}
+
+// Save the current server to the saved list
+const saveServerConfig = () => {
+  if (!serverIp.value) {
+    push.warning({
+      title: i18n.global.t('warning'),
+      message: i18n.global.t('serverImport.noServerIp')
+    })
+    return
+  }
+  
+  if (!serverPort.value) {
+    push.warning({
+      title: i18n.global.t('warning'),
+      message: i18n.global.t('serverImport.noServerPort')
+    })
+    return
+  }
+  
+  // Generate name if not provided
+  const name = serverName.value || `Server ${serverIp.value}`
+  
+  // Create unique ID using timestamp
+  const id = `server_${Date.now()}`
+  
+  // Check if a server with same IP and port already exists
+  const existingServerIndex = savedServers.value.findIndex(
+    server => server.ip === serverIp.value && server.port === serverPort.value
+  )
+  
+  if (existingServerIndex >= 0) {
+    // Update existing server
+    savedServers.value[existingServerIndex] = {
+      id: savedServers.value[existingServerIndex].id,
+      name: name,
+      ip: serverIp.value,
+      port: serverPort.value,
+      path: configPath.value
+    }
+  } else {
+    // Add new server
+    savedServers.value.push({
+      id,
+      name,
+      ip: serverIp.value,
+      port: serverPort.value,
+      path: configPath.value
+    })
+  }
+  
+  // Save to localStorage
+  localStorage.setItem('savedServers', JSON.stringify(savedServers.value))
+  
+  // Set as selected server
+  selectedSavedServer.value = existingServerIndex >= 0 
+    ? savedServers.value[existingServerIndex].id 
+    : id
+  
+  push.success({
+    title: i18n.global.t('success'),
+    message: i18n.global.t('serverImport.serverSaved')
+  })
+}
+
+// Load a saved server into the form
+const loadSavedServer = (serverId: string | null) => {
+  if (!serverId) return
+  
+  const server = savedServers.value.find(server => server.id === serverId)
+  if (server) {
+    serverIp.value = server.ip
+    serverPort.value = server.port
+    configPath.value = server.path
+    serverName.value = server.name
+  }
+}
+
+// Delete the selected server
+const deleteSelectedServer = () => {
+  if (!selectedSavedServer.value) return
+  
+  const serverIndex = savedServers.value.findIndex(
+    server => server.id === selectedSavedServer.value
+  )
+  
+  if (serverIndex >= 0) {
+    savedServers.value.splice(serverIndex, 1)
+    localStorage.setItem('savedServers', JSON.stringify(savedServers.value))
+    selectedSavedServer.value = null
+    
+    push.success({
+      title: i18n.global.t('success'),
+      message: i18n.global.t('serverImport.serverDeleted')
+    })
+  }
+}
 
 // Get the configuration in JSON format
 const updateConfigJson = () => {
@@ -161,6 +335,7 @@ const updateConfigJson = () => {
 // Initial data load
 onMounted(() => {
   updateConfigJson()
+  loadSavedServers()
 })
 
 // Copy config to clipboard
@@ -239,6 +414,18 @@ const fetchServerConfig = async () => {
     // Set the fetched config to the import textarea
     importJson.value = data
     
+    // Auto-save this server if it doesn't exist and has a good connection
+    if (serverIp.value && serverPort.value && !serverName.value) {
+      const existingServer = savedServers.value.find(
+        server => server.ip === serverIp.value && server.port === serverPort.value
+      )
+      
+      if (!existingServer) {
+        serverName.value = `Server ${serverIp.value}`
+        saveServerConfig()
+      }
+    }
+    
     push.success({
       title: i18n.global.t('success'),
       message: i18n.global.t('serverImport.fetchSuccess')
@@ -303,7 +490,12 @@ const importConfig = () => {
 // Reset configuration and clear localStorage
 const resetConfig = () => {
   if (confirm(i18n.global.t('exportConfig.resetConfirm'))) {
+    // Don't clear saved servers when resetting config
+    const storedServers = localStorage.getItem('savedServers')
     localStorage.clear()
+    if (storedServers) {
+      localStorage.setItem('savedServers', storedServers)
+    }
     window.location.reload()
   }
 }

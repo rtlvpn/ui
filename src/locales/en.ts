@@ -499,13 +499,18 @@ export default {
   serverImport: {
     title: "Import from Server",
     description: "Connect to a sing-box server API and fetch the configuration directly.",
+    savedServers: "Saved Servers",
     serverIp: "Server IP Address",
     serverPort: "Server Port",
+    serverName: "Server Name (Optional)",
     configPath: "Config File Path (Optional)",
-    fetchConfig: "Fetch Configuration from Server",
+    saveServer: "Save Server",
+    fetchConfig: "Fetch Configuration",
     fetchSuccess: "Configuration successfully fetched from server",
     fetchError: "Failed to fetch configuration: {error}",
     noServerIp: "Please enter a server IP address",
-    noServerPort: "Please enter a server port"
+    noServerPort: "Please enter a server port",
+    serverSaved: "Server configuration saved",
+    serverDeleted: "Server configuration deleted"
   },
 }
