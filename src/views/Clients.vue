@@ -1,4 +1,3 @@
-
 <template>
   <ClientModal 
     v-model="modal.visible"
@@ -115,6 +114,12 @@
         </v-card>
       </v-menu>
     </v-col>
+    <v-col cols="auto">
+      <v-btn color="secondary" variant="outlined" @click="updateConfigOnServers">
+        <v-icon left>mdi-sync</v-icon>
+        Update Config
+      </v-btn>
+    </v-col>
   </v-row>
   <v-row>
     <v-col cols="12">
@@ -212,6 +217,31 @@
         <v-icon icon="mdi-chart-line" @click="showStats(item.name)">
           <v-tooltip activator="parent" location="top" :text="$t('stats.graphTitle')"></v-tooltip>
         </v-icon>
+        <v-menu
+          v-model="serverMenu[item.id]"
+          :close-on-content-click="false"
+          location="top center"
+        >
+          <template v-slot:activator="{ props }">
+            <v-icon
+              class="me-2"
+              color="primary"
+              v-bind="props"
+            >
+              mdi-server-plus
+              <v-tooltip activator="parent" location="top" text="Add to Server"></v-tooltip>
+            </v-icon>
+          </template>
+          <v-list density="compact">
+            <v-list-item
+              v-for="server in savedServers"
+              :key="server.id"
+              @click="addClientToServer(item, server)"
+            >
+              <v-list-item-title>{{ server.name }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
       </v-data-table>
     </v-col>
@@ -233,11 +263,12 @@ import ClientBulk from '@/layouts/modals/ClientBulk.vue'
 import QrCode from '@/layouts/modals/QrCode.vue'
 import Stats from '@/layouts/modals/Stats.vue'
 import { Client } from '@/types/clients'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, reactive } from 'vue'
 import { HumanReadable } from '@/plugins/utils'
 import { i18n } from '@/locales'
 import { push } from 'notivue'
 import { useDisplay } from 'vuetify'
+import { inboundWithUsers } from '@/types/inbounds'
 
 const { smAndDown } = useDisplay()
 
@@ -428,5 +459,105 @@ const saveBulk = async (bulkClients: Client[]) => {
 
 const percent = (c: Client) => { return c.volume>0 ? Math.round((c.up+c.down) *100 / c.volume) : 0 }
 const percentColor = (c: Client) => { return (c.up+c.down) >= c.volume ? 'error' : percent(c)>90 ? 'warning' : 'success' }
+
+interface SavedServer {
+  id: string
+  name: string
+  ip: string
+  port: string
+  path: string
+}
+const savedServers = ref<SavedServer[]>([])
+const serverMenu = reactive<Record<number, boolean>>({})
+
+onMounted(() => {
+  const stored = localStorage.getItem('savedServers')
+  if (stored) {
+    try {
+      savedServers.value = JSON.parse(stored)
+    } catch {
+      savedServers.value = []
+    }
+  }
+})
+
+const addClientToServer = async (client: Client, server: SavedServer) => {
+  const inbList = Data().inbounds.filter(i => client.inbounds.includes(i.id))
+  for (const inb of inbList) {
+    if (!inboundWithUsers.includes(inb.type)) continue
+
+    // pick correct protocol-specific endpoint path
+    let endpointPath = ''
+    switch (inb.type) {
+      case 'vless':
+        endpointPath = 'inbounds/users/add'
+        break
+      case 'vmess':
+        endpointPath = 'vmess/inbounds/users/add'
+        break
+      case 'http':
+        endpointPath = 'http/inbounds/users/add'
+        break
+      case 'tuic':
+        endpointPath = 'tuic/inbounds/users/add'
+        break
+      default:
+        continue
+    }
+    const url = `http://${server.ip}:${server.port}/${endpointPath}?config_path=${encodeURIComponent(server.path)}`
+
+    // build request body
+    let body: any
+    switch (inb.type) {
+      case 'vless':
+        body = { tag: inb.tag, user: { name: client.name, uuid: client.config?.vless?.uuid, flow: client.config?.vless?.flow } }
+        break
+      case 'vmess':
+        body = { tag: inb.tag, user: { name: client.name, uuid: client.config?.vmess?.uuid, alterId: client.config?.vmess?.alterId } }
+        break
+      case 'http':
+        body = { tag: inb.tag, user: { username: client.name, password: client.config?.http?.password } }
+        break
+      case 'tuic':
+        body = { tag: inb.tag, user: { name: client.name, uuid: client.config?.tuic?.uuid, password: client.config?.tuic?.password } }
+        break
+    }
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+      if (!res.ok) {
+        const err = await res.text()
+        throw new Error(err || res.statusText)
+      }
+    } catch (e: any) {
+      push.error({ title: i18n.global.t('failed'), message: e.message })
+      return
+    }
+  }
+
+  push.success({ title: i18n.global.t('success'), message: `${client.name} → ${server.name}` })
+  serverMenu[client.id!] = false
+}
+
+const updateConfigOnServers = async () => {
+  if (!savedServers.value.length) {
+    push.warning({ title: i18n.global.t('warning'), message: 'No saved servers found' })
+    return
+  }
+  for (const srv of savedServers.value) {
+    const url = `http://${srv.ip}:${srv.port}/config/update?path=${encodeURIComponent(srv.path)}`
+    try {
+      const res = await fetch(url, { method: 'POST' })
+      if (!res.ok) throw new Error(await res.text() || res.statusText)
+      push.success({ title: i18n.global.t('success'), message: `${srv.name} updated` })
+    } catch (e: any) {
+      push.error({ title: i18n.global.t('failed'), message: `${srv.name}: ${e.message}` })
+    }
+  }
+}
 
 </script>
