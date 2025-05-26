@@ -242,6 +242,31 @@
             </v-list-item>
           </v-list>
         </v-menu>
+        <v-menu
+          v-model="serverDelMenu[item.id]"
+          :close-on-content-click="false"
+          location="top center"
+        >
+          <template v-slot:activator="{ props }">
+            <v-icon
+              class="me-2"
+              color="error"
+              v-bind="props"
+            >
+              mdi-server-remove
+              <v-tooltip activator="parent" location="top" text="Delete from Server"></v-tooltip>
+            </v-icon>
+          </template>
+          <v-list density="compact">
+            <v-list-item
+              v-for="server in savedServers"
+              :key="server.id"
+              @click="removeClientFromServer(item, server)"
+            >
+              <v-list-item-title>{{ server.name }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
       </v-data-table>
     </v-col>
@@ -469,6 +494,7 @@ interface SavedServer {
 }
 const savedServers = ref<SavedServer[]>([])
 const serverMenu = reactive<Record<number, boolean>>({})
+const serverDelMenu = reactive<Record<number, boolean>>({})
 
 onMounted(() => {
   const stored = localStorage.getItem('savedServers')
@@ -541,6 +567,54 @@ const addClientToServer = async (client: Client, server: SavedServer) => {
 
   push.success({ title: i18n.global.t('success'), message: `${client.name} → ${server.name}` })
   serverMenu[client.id!] = false
+}
+
+const removeClientFromServer = async (client: Client, server: SavedServer) => {
+  const inbList = Data().inbounds.filter(i => client.inbounds.includes(i.id))
+  for (const inb of inbList) {
+    if (!inboundWithUsers.includes(inb.type)) continue
+
+    // pick correct delete endpoint
+    let endpointPath = ''
+    switch (inb.type) {
+      case 'vless': endpointPath = 'inbounds/users/delete'; break
+      case 'vmess': endpointPath = 'vmess/inbounds/users/delete'; break
+      case 'http' : endpointPath = 'http/inbounds/users/delete';  break
+      case 'tuic' : endpointPath = 'tuic/inbounds/users/delete';  break
+      default: continue
+    }
+
+    // build query params
+    const params = new URLSearchParams({ tag: inb.tag, config_path: server.path })
+    if (inb.type === 'http') {
+      params.append('username', client.name)
+    } else {
+      const uuid = client.config?.[inb.type]?.uuid || ''
+      params.append('uuid', uuid)
+    }
+
+    const url = `http://${server.ip}:${server.port}/${endpointPath}?${params.toString()}`
+    try {
+      const res = await fetch(url, { method: 'DELETE' })
+      if (!res.ok) {
+        const err = await res.text()
+        throw new Error(err || res.statusText)
+      }
+    } catch (e: any) {
+      push.error({ title: i18n.global.t('failed'), message: e.message })
+      return
+    }
+  }
+
+  // all remote deletions succeeded → delete locally
+  const success = await Data().save('clients', 'del', client.id)
+  if (success) {
+    push.success({
+      title: i18n.global.t('success'),
+      message: `${client.name} deleted from ${server.name}`
+    })
+    serverDelMenu[client.id!] = false
+  }
 }
 
 const updateConfigOnServers = async () => {
