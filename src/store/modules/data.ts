@@ -215,19 +215,31 @@ const Data = defineStore('Data', {
           }
         } else if (object === 'outbounds') {
           if (action === 'new') {
-            const newId = Math.max(0, ...this.outbounds.map((o: any) => o.id)) + 1
-            data.id = newId
-            this.outbounds.push(data)
-            currentConfig.outbounds = this.outbounds
+            // Create a new ID if needed
+            const newId = Math.max(0, ...this.outbounds.map((o: any) => o.id || 0)) + 1;
+            data.id = newId;
+            this.outbounds.push(data);
+            currentConfig.outbounds = this.outbounds;
           } else if (action === 'edit') {
-            const index = this.outbounds.findIndex((o: any) => o.id === data.id)
+            // Look up by oldTag if provided, otherwise by id
+            const oldTag = data.oldTag;
+            delete data.oldTag; // Remove the temp property
+            
+            const index = oldTag 
+              ? this.outbounds.findIndex((o: any) => o.tag === oldTag)
+              : this.outbounds.findIndex((o: any) => o.id === data.id);
+              
             if (index >= 0) {
-              this.outbounds[index] = data
-              currentConfig.outbounds = this.outbounds
+              // Make sure to preserve the ID if it exists
+              if (this.outbounds[index].id) {
+                data.id = this.outbounds[index].id;
+              }
+              this.outbounds[index] = data;
+              currentConfig.outbounds = this.outbounds;
             }
           } else if (action === 'del') {
-            this.outbounds = this.outbounds.filter((o: any) => o.tag !== data)
-            currentConfig.outbounds = this.outbounds
+            this.outbounds = this.outbounds.filter((o: any) => o.tag !== data);
+            currentConfig.outbounds = this.outbounds;
           }
         } else if (object === 'rules') {
           currentConfig.route = currentConfig.route || {}

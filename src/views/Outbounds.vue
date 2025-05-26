@@ -59,7 +59,7 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions style="padding: 0;">
-          <v-btn icon="mdi-file-edit" @click="showModal(item.id)">
+          <v-btn icon="mdi-file-edit" @click="showModal(item.tag)">
             <v-icon />
             <v-tooltip activator="parent" location="top" :text="$t('actions.edit')"></v-tooltip>
           </v-btn>
@@ -120,10 +120,25 @@ const modal = ref({
 
 let delOverlay = ref(new Array<boolean>)
 
-const showModal = (id: number) => {
-  modal.value.id = id
-  modal.value.data = id == 0 ? '' : JSON.stringify(outbounds.value.findLast(o => o.id == id))
-  modal.value.visible = true
+const showModal = (tagOrId: string | number) => {
+  // If it's 0, it's a new outbound
+  if (tagOrId === 0) {
+    modal.value.id = 0;
+    modal.value.data = '';
+    modal.value.visible = true;
+    return;
+  }
+  
+  // Otherwise, look up by tag (string)
+  const outboundToEdit = outbounds.value.find(o => o.tag === tagOrId);
+  console.log("Found outbound to edit:", outboundToEdit);
+  
+  if (outboundToEdit) {
+    // For edit, set id to 1 to trigger edit mode in the modal
+    modal.value.id = 1; 
+    modal.value.data = JSON.stringify(outboundToEdit);
+    modal.value.visible = true;
+  }
 }
 
 const closeModal = () => {
@@ -131,21 +146,28 @@ const closeModal = () => {
 }
 const saveModal = async (data:Outbound) => {
   // Check duplicate tag
-  const oldTag = modal.value.id > 0 ? outbounds.value.findLast(i => i.id == modal.value.id)?.tag : null
+  const oldTag = modal.value.id > 0 ? outbounds.value.find(i => 
+    i.tag === JSON.parse(modal.value.data).tag)?.tag : null;
+    
   if (data.tag != oldTag && outboundTags.value.includes(data.tag)) {
     push.error({
       message: i18n.global.t('error.dplData') + ": " + i18n.global.t('objects.tag')
     })
-    return
+    return;
   }
 
-  // save data
-  const success = await Data().save("outbounds", modal.value.id == 0 ? "new" : "edit", data)
+  // Save data - for edit, pass the old tag so we know which one to update
+  const success = await Data().save(
+    "outbounds", 
+    modal.value.id === 0 ? "new" : "edit",
+    modal.value.id === 0 ? data : { oldTag: oldTag, ...data }
+  );
+  
   if (!success) {
-    return
+    return;
   }
 
-  modal.value.visible = false
+  modal.value.visible = false;
 }
 
 const stats = ref({

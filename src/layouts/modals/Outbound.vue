@@ -23,7 +23,7 @@
                   :label="$t('type')"
                   :items="Object.keys(outTypes).map((key,index) => ({title: key, value: Object.values(outTypes)[index]}))"
                   v-model="outbound.type"
-                  @update:modelValue="changeType">
+                  @update:modelValue="$props.id > 0 ? null : changeType">
                   </v-select>
                 </v-col>
                 <v-col cols="12" sm="6" md="4">
@@ -140,6 +140,7 @@ export default {
       outTypes: OutTypes,
       NoDial: [OutTypes.Selector, OutTypes.URLTest],
       NoServer: [OutTypes.Direct, OutTypes.Selector, OutTypes.URLTest, OutTypes.Tor],
+      _originalData: null,
     }
   },
   methods: {
@@ -158,9 +159,15 @@ export default {
     changeType() {
       // Tag change only in add outbound
       const tag = this.$props.id > 0 ? this.outbound.tag : this.outbound.type + "-" + RandomUtil.randomSeq(3)
-      // Use previous data
-      const prevConfig = { id: this.outbound.id, tag: tag ,listen: this.outbound.listen, listen_port: this.outbound.listen_port }
-      this.outbound = createOutbound(this.outbound.type, prevConfig)
+      
+      if (this.$props.id > 0) {
+        // For edit mode, preserve all existing properties and just change the type
+        this.outbound.type = this.outbound.type
+      } else {
+        // For add mode, create a new outbound with minimal properties
+        const prevConfig = { id: this.outbound.id, tag: tag, listen: this.outbound.listen, listen_port: this.outbound.listen_port }
+        this.outbound = createOutbound(this.outbound.type, prevConfig)
+      }
     },
     closeModal() {
       this.updateData() // reset
