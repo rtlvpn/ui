@@ -52,7 +52,7 @@
               <Transport v-if="Object.hasOwn(inbound,'transport')" :data="inbound" />
               <Users v-if="hasUser" :clients="clients" :data="initUsers" />
               <InTls v-if="HasTls.includes(inbound.type)"  :inbound="inbound" :tlsConfigs="tlsConfigs" :tls_id="inbound.tls_id" />
-              <Multiplex v-if="Object.hasOwn(inbound,'multiplex')" direction="in" :data="inbound" />
+              <Multiplex v-if="HasMultiplex.includes(inbound.type)" direction="in" :data="inbound" />
             </v-window-item>
             <v-window-item value="c">
               <OutJsonVue :inData="inbound" :type="inbound.type" />
@@ -155,6 +155,12 @@ export default {
         InTypes.VLESS,
       ],
       OnlyTLS: [InTypes.Hysteria, InTypes.Hysteria2, InTypes.TUIC, InTypes.Naive ],
+      HasMultiplex: [
+        InTypes.Shadowsocks,
+        InTypes.VMess,
+        InTypes.Trojan,
+        InTypes.VLESS
+      ],
     }
   },
   methods: {
@@ -162,6 +168,19 @@ export default {
       this.loading = true
       const inboundArray = await Data().loadInbounds([this.$props.id])
       this.inbound = inboundArray[0]
+      
+      // Add multiplex property if the inbound type supports it but doesn't have it
+      // This ensures multiplex options are visible when editing inbounds
+      const multiplexTypes = [
+        InTypes.Shadowsocks,
+        InTypes.VMess, 
+        InTypes.Trojan,
+        InTypes.VLESS
+      ]
+      if (multiplexTypes.includes(this.inbound.type) && !Object.hasOwn(this.inbound, 'multiplex')) {
+        // Type assertion to avoid TypeScript error
+        (this.inbound as any).multiplex = {}
+      }
       
       // Initialize initUsers with existing associated clients
       if (this.inbound.users && this.inbound.users.length > 0) {
