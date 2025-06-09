@@ -4,14 +4,33 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-/* Apply custom styling to entire app */
-.v-application {
-  font-family: 'VT323', monospace !important;
-  background-image: linear-gradient(to bottom right, #FF00FF, #00FFFF) !important;
-  background-attachment: fixed !important;
+/* CSS Variables for consistency */
+:root {
+  --y2k-primary: #FF00FF;
+  --y2k-secondary: #00FFFF;
+  --y2k-tertiary: #FFFF00;
+  --y2k-accent: #FF00AA;
+  --y2k-error: #FF0000;
+  --y2k-warning: #FFA500;
+  --y2k-info: #00FFFF;
+  --y2k-success: #00FF00;
+  --y2k-surface: #C0C0C0;
+  --y2k-background: #008080;
+  --y2k-border-dark: #0a0a0a;
+  --y2k-border-light: #dfdfdf;
+  --y2k-border-dark-mid: grey;
+  --y2k-border-light-mid: white;
+  --y2k-window-title-bg: linear-gradient(90deg, #000080, #1084d0);
 }
 
-/* Override default font for all text elements */
+/* Base Application Styling */
+.v-application {
+  font-family: 'VT323', monospace;
+  background-image: linear-gradient(to bottom right, var(--y2k-primary), var(--y2k-secondary));
+  background-attachment: fixed;
+}
+
+/* Typography */
 .v-application .text-h1,
 .v-application .text-h2,
 .v-application .text-h3,
@@ -23,122 +42,201 @@
 .v-application .text-body-1,
 .v-application .text-body-2,
 .v-application .v-btn {
-  font-family: 'VT323', monospace !important;
+  font-family: 'VT323', monospace;
   letter-spacing: 0.5px;
 }
 
-/* Special styling for headings */
 .v-application .text-h1,
 .v-application .text-h2,
 .v-application .text-h3 {
-  text-shadow: 2px 2px 0px #FF00FF, 4px 4px 0px #00FFFF;
-  font-family: 'Press Start 2P', cursive !important;
+  text-shadow: 2px 2px 0px var(--y2k-primary), 4px 4px 0px var(--y2k-secondary);
+  font-family: 'Press Start 2P', cursive;
 }
 
-/* Override Vuetify's card styles with higher specificity */
-.v-application .v-card {
-  border: 2px solid #000000 !important;
-  border-radius: 0 !important;
+/* Button Styling */
+.y2k-btn {
+  border-radius: 0;
+  background-color: var(--y2k-surface);
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: normal;
+  height: 28px;
+  min-width: 80px;
+  transition: none;
+}
+
+.y2k-btn:active {
   box-shadow: 
-    inset -1px -1px #0a0a0a,
-    inset 1px 1px #dfdfdf,
-    inset -2px -2px grey,
-    inset 2px 2px white !important;
-  background-color: #C0C0C0 !important;
-  overflow: hidden !important;
+    inset 1px 1px var(--y2k-border-dark),
+    inset -1px -1px var(--y2k-border-light),
+    inset 2px 2px var(--y2k-border-dark-mid),
+    inset -2px -2px var(--y2k-border-light-mid);
 }
 
-/* Fix card title specificity */
-.v-application .v-card .v-card-title {
-  background: linear-gradient(90deg, #000080, #1084d0) !important;
-  color: white !important;
-  font-weight: bold !important;
-  height: 28px !important;
-  padding: 2px 4px !important;
-  display: flex !important;
-  align-items: center !important;
-  font-family: 'VT323', monospace !important;
+/* Card Styling */
+.y2k-card {
+  border: 2px solid #000000;
+  border-radius: 0;
+  box-shadow: 5px 5px 0px #000000;
+  background-color: var(--y2k-surface);
+  overflow: hidden;
+  margin: 8px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Fix card content specificity */
-.v-application .v-card .v-card-text {
-  background-color: #C0C0C0 !important;
-  font-family: 'VT323', monospace !important;
+.y2k-card .v-card__title {
+  background: var(--y2k-window-title-bg);
+  color: white;
+  font-weight: bold;
+  height: 32px;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
 }
 
-/* Make sure v-btn components inside cards maintain proper styling */
-.v-application .v-card .v-btn {
-  border-radius: 0 !important;
-  background-color: #C0C0C0 !important;
-  box-shadow: 
-    inset -1px -1px #0a0a0a,
-    inset 1px 1px #dfdfdf,
-    inset -2px -2px grey,
-    inset 2px 2px white !important;
-  text-transform: none !important;
-  letter-spacing: 0 !important;
-  font-weight: normal !important;
-  height: 28px !important;
-  min-width: 80px !important;
-  transition: none !important;
+.y2k-card .v-card__text {
+  background-color: var(--y2k-surface);
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
-/* Windows 98 style buttons */
-.v-btn:active {
-  box-shadow: 
-    inset 1px 1px #0a0a0a,
-    inset -1px -1px #dfdfdf,
-    inset 2px 2px grey,
-    inset -2px -2px white !important;
+/* Form Control Styling */
+.y2k-text-field {
+  border-radius: 0;
+  background-color: white;
+  border: 2px solid #000000;
 }
 
-/* Windows 98 style text fields */
+.y2k-select {
+  border-radius: 0;
+  background-color: white;
+  border: 2px solid #000000;
+}
+
 .v-field {
-  border-radius: 0 !important;
-  background-color: white !important;
+  border-radius: 0;
+  background-color: white;
   box-shadow: 
-    inset 1px 1px #0a0a0a,
-    inset -1px -1px #dfdfdf,
-    inset 2px 2px grey,
-    inset -2px -2px white !important;
+    inset 1px 1px var(--y2k-border-dark),
+    inset -1px -1px var(--y2k-border-light),
+    inset 2px 2px var(--y2k-border-dark-mid),
+    inset -2px -2px var(--y2k-border-light-mid);
 }
 
 /* Select dropdown styling */
 .v-select__selection {
-  color: black !important;
+  color: black;
 }
 
 .v-select .v-field__input {
-  padding: 0 5px !important;
+  padding: 0 5px;
 }
 
 .v-select .v-select__content {
-  background-color: white !important;
-  border: 2px solid #000000 !important;
-  border-radius: 0 !important;
+  background-color: white;
+  border: 2px solid #000000;
+  border-radius: 0;
   box-shadow: 
-    inset -1px -1px #0a0a0a,
-    inset 1px 1px #dfdfdf,
-    inset -2px -2px grey,
-    inset 2px 2px white !important;
+    inset -1px -1px var(--y2k-border-dark),
+    inset 1px 1px var(--y2k-border-light),
+    inset -2px -2px var(--y2k-border-dark-mid),
+    inset 2px 2px var(--y2k-border-light-mid);
 }
 
 .v-select .v-list-item {
-  min-height: 24px !important;
-  padding: 0 8px !important;
+  min-height: 24px;
+  padding: 0 8px;
 }
 
 .v-select .v-list-item--active {
-  background-color: #000080 !important;
-  color: white !important;
+  background-color: #000080;
+  color: white;
 }
 
-/* Checkbox and switch styling */
-.v-selection-control {
-  min-height: 24px !important;
+/* Dialogs and Overlays */
+.v-dialog {
+  border: 2px solid #000000;
+  border-radius: 0;
+  box-shadow: 5px 5px 0px #000000;
 }
 
-/* Add scanlines effect */
+/* Tooltip and overlay z-index */
+.v-tooltip, 
+.v-overlay {
+  z-index: 9997;
+}
+
+/* Navigation Drawer */
+.v-navigation-drawer {
+  background-color: var(--y2k-surface);
+  border-right: 2px solid #000000;
+}
+
+.v-navigation-drawer .v-list {
+  background-color: var(--y2k-surface);
+  padding: 0;
+}
+
+.v-navigation-drawer .v-list-item {
+  border-radius: 0;
+  min-height: 32px;
+  padding: 0 8px;
+}
+
+.v-navigation-drawer .v-list-item--active {
+  background-color: #000080;
+  color: white;
+}
+
+.v-navigation-drawer .v-list-item:hover:not(.v-list-item--active) {
+  background-color: #d0d0d0;
+}
+
+/* App Bar */
+.v-app-bar {
+  background-color: var(--y2k-surface);
+  border-bottom: 2px solid #000000;
+  box-shadow: 
+    inset -1px -1px var(--y2k-border-dark),
+    inset 1px 1px var(--y2k-border-light),
+    inset -2px -2px var(--y2k-border-dark-mid),
+    inset 2px 2px var(--y2k-border-light-mid);
+}
+
+/* Tables */
+.v-table {
+  border-collapse: collapse;
+}
+
+.v-table th, .v-table td {
+  border: 1px solid #808080;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--y2k-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--y2k-surface);
+  border: 1px solid #000000;
+  box-shadow: 
+    inset -1px -1px var(--y2k-border-dark),
+    inset 1px 1px var(--y2k-border-light),
+    inset -2px -2px var(--y2k-border-dark-mid),
+    inset 2px 2px var(--y2k-border-light-mid);
+}
+
+/* Visual Effects */
 .v-application::after {
   content: "";
   position: fixed;
@@ -158,7 +256,6 @@
   opacity: 0.3;
 }
 
-/* Add CRT screen glow */
 .v-application::before {
   content: "";
   position: fixed;
@@ -181,56 +278,9 @@
   text-decoration: underline;
 }
 
-/* Tables with grid lines */
-.v-table {
-  border-collapse: collapse !important;
-}
-
-.v-table th, .v-table td {
-  border: 1px solid #808080 !important;
-}
-
-/* Scrollbars */
-::-webkit-scrollbar {
-  width: 16px;
-  height: 16px;
-}
-
-::-webkit-scrollbar-track {
-  background: #c0c0c0;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c0c0c0;
-  border: 1px solid #000;
-  box-shadow: 
-    inset -1px -1px #0a0a0a,
-    inset 1px 1px #dfdfdf,
-    inset -2px -2px grey,
-    inset 2px 2px white;
-}
-
-::-webkit-scrollbar-button {
-  display: block;
-  height: 16px;
-  width: 16px;
-  background-color: #c0c0c0;
-  box-shadow: 
-    inset -1px -1px #0a0a0a,
-    inset 1px 1px #dfdfdf,
-    inset -2px -2px grey,
-    inset 2px 2px white;
-}
-
-/* Checkbox and radio button styling */
-.v-checkbox .v-selection-control__input:before {
-  border-radius: 0 !important;
-}
-
-/* Dialog boxes */
-.v-dialog {
-  border: 2px solid #000 !important;
-  border-radius: 0 !important;
+/* Checkbox and switch styling */
+.v-selection-control {
+  min-height: 24px !important;
 }
 
 /* Fix Cursor - Make sure it's visible and applies to all elements */
@@ -238,68 +288,7 @@ html, body, * {
     cursor: url('/public/assets/cursor.png'), pointer !important;
 }
 
-/* Sidebar/Navigation Styling */
-.v-navigation-drawer {
-  background-color: #C0C0C0 !important;
-  border-right: 2px solid #000000 !important;
-  box-shadow: 
-    inset -1px -1px #0a0a0a,
-    inset 1px 1px #dfdfdf,
-    inset -2px -2px grey,
-    inset 2px 2px white !important;
-}
-
-/* Navigation drawer header */
-.v-navigation-drawer .v-list-item {
-  background-color: #000080 !important;
-  color: white !important;
-  border-bottom: 2px solid #000000 !important;
-}
-
-.v-navigation-drawer .v-list-item__title {
-  font-family: 'VT323', monospace !important;
-  font-size: 1.2rem !important;
-}
-
-/* Navigation items */
-.v-navigation-drawer .v-list {
-  background-color: #C0C0C0 !important;
-  padding: 2px !important;
-}
-
-.v-navigation-drawer .v-list-item {
-  margin-bottom: 2px !important;
-  border: 1px solid #808080 !important;
-  border-radius: 0 !important;
-  height: 32px !important;
-}
-
-.v-navigation-drawer .v-list-item--active {
-  background-color: #000080 !important;
-  color: white !important;
-  box-shadow: 
-    inset 1px 1px #0a0a0a,
-    inset -1px -1px #dfdfdf,
-    inset 2px 2px grey,
-    inset -2px -2px white !important;
-}
-
-.v-navigation-drawer .v-list-item:hover:not(.v-list-item--active) {
-  background-color: #1084d0 !important;
-  color: white !important;
-}
-
 /* App Bar styling */
-.v-app-bar {
-  background-color: #C0C0C0 !important;
-  border-bottom: 2px solid #000000 !important;
-  box-shadow: 
-    inset -1px -1px #0a0a0a,
-    inset 1px 1px #dfdfdf,
-    inset -2px -2px grey,
-    inset 2px 2px white !important;
-}
-
 .v-app-bar-title {
   font-family: 'Press Start 2P', cursive !important;
   font-size: 1rem !important;

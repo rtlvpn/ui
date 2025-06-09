@@ -23,7 +23,8 @@ import { registerPlugins } from '@/plugins'
 import { i18n } from '@/locales'
 import Vue3PersianDatetimePicker from 'vue3-persian-datetime-picker'
 
-// Custom Y2K Theme
+// Style order matters! First reset Vuetify, then apply our styles
+import '@/styles/vuetify-reset.css'
 import '@/styles/y2k-theme.css'
 import '@/styles/vuetify-overrides.css'
 

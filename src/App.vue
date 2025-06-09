@@ -56,19 +56,20 @@ onMounted(() => {
 </script>
 
 <style>
+/* These styles need to be global (not scoped) */
 .v-overlay .v-list-item,
 .v-field__input {
   direction: ltr;
 }
 
 .y2k-overlay .v-progress-circular {
-  box-shadow: 0 0 15px #FF00FF, 0 0 25px #00FFFF;
+  box-shadow: 0 0 15px var(--y2k-primary), 0 0 25px var(--y2k-secondary);
 }
 
 .y2k-loading {
-  font-family: 'Press Start 2P', cursive !important;
-  color: #FF00FF;
-  text-shadow: 2px 2px #00FFFF;
+  font-family: 'Press Start 2P', cursive;
+  color: var(--y2k-primary);
+  text-shadow: 2px 2px var(--y2k-secondary);
   font-size: 16px;
 }
 </style>

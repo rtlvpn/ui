@@ -17,22 +17,21 @@ import { createVuetify } from 'vuetify'
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   defaults: {
-    VRow: { dense: true }, // Apply dense to v-row as default
+    VRow: { dense: true },
     VBtn: {
-      style: 'text-transform: none; border-radius: 0; box-shadow: 3px 3px 0px #000000;'
+      class: 'y2k-btn'
     },
     VCard: {
-      style: 'border: 2px solid #000000; border-radius: 0; box-shadow: 5px 5px 0px #000000;',
-      class: 'y2k-card'  // Add a custom class to help with styling
+      class: 'y2k-card'
     },
     VCardTitle: {
-      class: 'y2k-card-title'  // Add a custom class
+      class: 'y2k-card-title'
     },
     VTextField: {
-      style: 'border-radius: 0; background-color: #FFFFFF; border: 2px solid #000000;'
+      class: 'y2k-text-field'
     },
     VSelect: {
-      style: 'border-radius: 0; background-color: #FFFFFF; border: 2px solid #000000;'
+      class: 'y2k-select'
     }
   },
   theme: {
@@ -67,16 +66,16 @@ export default createVuetify({
       y2k: {
         dark: false,
         colors: {
-          primary: '#FF00FF', // Bright magenta/pink
-          secondary: '#00FFFF', // Cyan
-          tertiary: '#FFFF00', // Yellow
-          accent: '#FF00AA', // Hot pink
-          error: '#FF0000', // Red
-          warning: '#FFA500', // Orange
-          info: '#00FFFF', // Cyan
-          success: '#00FF00', // Lime green
-          surface: '#C0C0C0', // Silver (Windows 98 bg color)
-          background: '#008080', // Teal (Windows 98 default)
+          primary: '#FF00FF',
+          secondary: '#00FFFF',
+          tertiary: '#FFFF00',
+          accent: '#FF00AA',
+          error: '#FF0000',
+          warning: '#FFA500',
+          info: '#00FFFF',
+          success: '#00FF00',
+          surface: '#C0C0C0',
+          background: '#008080',
         },
       },
     },

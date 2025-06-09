@@ -1,0 +1,93 @@
+/* Reset Vuetify's default styles that conflict with our theme */
+
+/* Remove default border radius everywhere */
+.v-btn,
+.v-card,
+.v-field,
+.v-input,
+.v-select,
+.v-list,
+.v-list-item,
+.v-navigation-drawer,
+.v-dialog,
+.v-menu,
+.v-sheet {
+  border-radius: 0 !important;
+}
+
+/* Remove default shadows */
+.v-btn:not(.y2k-btn),
+.v-card:not(.y2k-card),
+.v-dialog:not(.y2k-dialog),
+.v-menu__content {
+  box-shadow: none !important;
+}
+
+/* Fix VSelect issues */
+.v-field__input {
+  min-height: 28px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Ensure proper line height for inputs */
+.v-field__field {
+  align-items: center !important;
+}
+
+/* Remove primary color background */
+.bg-primary {
+  background-color: var(--y2k-primary) !important;
+}
+
+/* Fix panels */
+.v-expansion-panels {
+  box-shadow: none !important;
+  border: 2px solid #000000;
+}
+
+.v-expansion-panel {
+  border-radius: 0 !important;
+  background-color: var(--y2k-surface) !important;
+}
+
+/* Remove animation except where needed */
+.v-btn,
+.v-card,
+.v-input,
+.v-expansion-panel,
+.v-list-item {
+  transition: none !important;
+}
+
+/* FIX: Hide placeholder text when input has value */
+.v-field--active .v-field__input input::placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+
+/* FIX: Properly position label above the field when field has value */
+.v-field--variant-filled.v-field--active .v-field__overlay {
+  opacity: 0 !important;
+}
+
+/* FIX: Hide floating labels when input has value */
+.v-field__input:not(:placeholder-shown) ~ .v-field__placeholder {
+  opacity: 0 !important;
+}
+
+/* FIX: Ensure input text is visible and doesn't overlap with label */
+.v-field__input {
+  color: black !important;
+  font-weight: normal !important;
+}
+
+/* FIX: Better label placement when field is active */
+.v-field--active .v-field__field .v-label.v-field-label {
+  transform: translateY(-25px) scale(0.75) !important;
+}
+
+/* FIX: Hide floating label on select fields with value */
+.v-select .v-field.v-field--active .v-field__field .v-label {
+  opacity: 0 !important;
+} 
