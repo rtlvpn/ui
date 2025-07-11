@@ -32,4 +32,62 @@
 .y2k-card-title {
   font-weight: bold !important;
   height: 32px !important;
+}
+
+/* FIX: Improved modal form styling */
+.v-dialog .v-row {
+  margin: 0 !important;
+}
+
+.v-dialog .v-col {
+  padding: 8px !important;
+}
+
+.v-dialog .v-text-field,
+.v-dialog .v-select,
+.v-dialog .v-combobox {
+  margin-bottom: 4px !important;
+  background-color: white !important;
+  border-radius: 0 !important;
+  box-shadow: 
+    inset 1px 1px #0a0a0a,
+    inset -1px -1px #dfdfdf,
+    inset 2px 2px grey,
+    inset -2px -2px white !important;
+}
+
+.v-dialog .v-field {
+  border-radius: 0 !important;
+  background-color: white !important;
+  margin-bottom: 0 !important;
+}
+
+.v-dialog .v-field__input {
+  padding: 4px 8px !important;
+  min-height: 24px !important;
+}
+
+.v-dialog .v-field__field {
+  height: auto !important;
+}
+
+.v-dialog .v-field__outline {
+  display: none !important;
+}
+
+.v-dialog .v-label {
+  opacity: 1 !important;
+  margin-bottom: 4px !important;
+  font-size: 14px !important;
+  top: 6px !important;
+}
+
+.v-dialog .v-card-actions {
+  padding: 8px 16px !important;
+  background-color: #C0C0C0 !important;
+}
+
+/* FIX: Add proper spacing between form elements */
+.v-dialog .v-row + .v-row {
+  margin-top: 4px !important;
 } 
