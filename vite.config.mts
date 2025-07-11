@@ -16,7 +16,7 @@ function getUniqueFileName(template) {
 }
 
 export default defineConfig({
-  base: '',
+  base: '/ui/', // Change this to match your repository name
   plugins: [
     vue({
       template: { transformAssetUrls },
